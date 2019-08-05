@@ -2,7 +2,7 @@
 
 import datetime
 import math
-from statistics import mean, mode, median
+from statistics import mean, mode, median, harmonic_mean, pvariance
 
 import requests
 
@@ -21,6 +21,19 @@ def get_bdate(target):
         return r.json()['response'][0]['bdate']
     except:
         return -1;
+
+def get_name(target):
+        r = requests.get("https://api.vk.com/method/users.get", params={
+            "v": settings.version,
+            "access_token": settings.token,
+            "user_ids": target,
+            "fields": "bdate",
+            "name_case": "nom"
+        })
+        try:
+            return r.json()['response'][0]
+        except:
+            return -1;
 
 def get_id_by_domain(target):
     r = requests.get("https://api.vk.com/method/users.get", params={
@@ -109,10 +122,30 @@ def get_age(target):
 
 
 if __name__ == "__main__":
-    target = settings.target
+    print("Print target's ID:", end=" ")
+    target = input()
     age = get_age(target)
     avg_age = get_average_friends_age(target)
-    print("Age, judjing by the friends (mean) : {}".format(math.floor(mean(avg_age))))
-    print("Age, judjing by the friends (mode) : {}".format(mode(avg_age)))
-    print("Age, judjing by the friends (median) : {}".format(math.floor(median(avg_age))))
-    print("Age, judjing by the profile: {}".format(age))
+    try:
+        name = get_name(target)
+        print("Target: {} {}".format(name['first_name'], name['last_name']))
+    except:
+        print("Something gone wrong")
+    print("{}".format(age))
+    try:
+        print("{}".format(math.floor(mean(avg_age))))
+    except:
+        print("-1")
+    try:
+        print("{}".format(math.floor(mode(avg_age))))
+    except:
+        print("-1")
+    try:
+        print("{}".format(math.floor(harmonic_mean(avg_age))))
+    except:
+        print("-1")
+    try:
+        print("{}".format(math.floor(median(avg_age))))
+    except:
+        print("-1")
+
