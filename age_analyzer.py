@@ -3,9 +3,21 @@
 import datetime
 import math
 from statistics import mean, mode, median, harmonic_mean, pvariance
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import requests
 import settings
+
+def is_profile_closed(target):
+    r = requests.get("https://api.vk.com/method/users.get", params={
+        "v": settings.version,
+        "access_token": settings.token,
+        "user_ids": target,
+        "fields": "",
+        "name_case": "Nom"
+    })
+    data = r.json()['response'][0]
+
+    return not(data['can_access_closed'] or data['is_closed'])
 
 def get_bdate(target):
     r = requests.get("https://api.vk.com/method/users.get", params={
@@ -20,18 +32,20 @@ def get_bdate(target):
     except:
         return -1;
 
+
 def get_name(target):
-        r = requests.get("https://api.vk.com/method/users.get", params={
-            "v": settings.version,
-            "access_token": settings.token,
-            "user_ids": target,
-            "fields": "bdate",
-            "name_case": "nom"
-        })
-        try:
-            return r.json()['response'][0]
-        except:
-            return -1;
+    r = requests.get("https://api.vk.com/method/users.get", params={
+        "v": settings.version,
+        "access_token": settings.token,
+        "user_ids": target,
+        "fields": "bdate",
+        "name_case": "nom"
+    })
+    try:
+        return r.json()['response'][0]
+    except:
+        return -1
+
 
 def get_id_by_domain(target):
     r = requests.get("https://api.vk.com/method/users.get", params={
@@ -41,7 +55,11 @@ def get_id_by_domain(target):
         "fields": "id",
         "name_case": "nom"
     })
-    return r.json()['response'][0]['id']
+    try:
+        return r.json()['response'][0]['id']
+    except:
+        pass
+
 
 def get_friends(target, count):
     all_data = []
@@ -65,7 +83,7 @@ def get_friends(target, count):
             "access_token": settings.token,
             "user_id": target,
             "order": "name",
-            "count": count-5000,
+            "count": count - 5000,
             "offset": 5000,
             "fields": "nickname",
             "name_case": "nom"
@@ -78,11 +96,13 @@ def get_friends(target, count):
         all_data.extend(data)
     return all_data
 
+
 def get_friends_ages(target):
     friends_bdate = get_friends_bdate(target)
     ages = []
-    if friends_bdate == -1:
-        return -1
+    age = -1
+    if friends_bdate == "PC":
+        return "PC"
     for person in friends_bdate:
         try:
             age = get_age_by_bdate(person['bdate'])
@@ -91,6 +111,7 @@ def get_friends_ages(target):
         if age != -1:
             ages.append(age)
     return ages
+
 
 def get_friends_bdate(target):
     target_id = get_id_by_domain(target)
@@ -105,8 +126,10 @@ def get_friends_bdate(target):
     })
     try:
         return r.json()['response']['items']
-    except:
-        return -1
+    except KeyError:
+        # print("PROFILE CLOSED")
+        return "PC"
+
 
 def get_age(target):
     birth_date_str = get_bdate(target)
@@ -137,6 +160,7 @@ def get_age(target):
     age = math.floor(age / 365)
     return age
 
+
 def get_age_by_bdate(birth_date_str):
     today_date = datetime.datetime.today()
     if birth_date_str == -1:
@@ -166,20 +190,49 @@ def get_age_by_bdate(birth_date_str):
     return age
 
 
-if __name__ == "__main__":
+def get_school_graduation_year(target):
+    r = requests.get("https:")
+
+
+def build_graph(ages):
+    ages_count = {}
+    for person_age in ages:
+        print(person_age, end=" ")
+        try:
+            ages_count[person_age] += 1
+        except:
+            ages_count.update({person_age: 0})
+    plt.title(f"Target: {name['first_name']} {name['last_name']}")
+    plt.grid(True)
+    plt.ylabel("Friends count")
+    plt.xlabel("Friends age")
+    plt.bar(ages_count.keys(), ages_count.values())
+    plt.show()
+
+    # if __name__ == "__main__":
     print("Print target's ID:", end=" ")
     target = input()
     ages = get_friends_ages(target)
     name = get_name(target)
     age = get_age(target)
+
+    print("")
     try:
         name = get_name(target)
         print("Target: {} {}".format(name['first_name'], name['last_name']))
     except:
         print("Something gone wrong")
+
     print("Profile age: {}".format(age))
+    print("Friends with age count: {}".format(len(ages)))
+    print(ages)
+    print("")
     try:
         print("Mean: {}".format(math.floor(mean(ages))))
+    except:
+        print("-1")
+    try:
+        print("Harmonic mean {}".format(math.floor(harmonic_mean(ages))))
     except:
         print("-1")
     try:
@@ -187,17 +240,7 @@ if __name__ == "__main__":
     except:
         print("-1")
     try:
-        print("Harmonic mean{}".format(math.floor(harmonic_mean(ages))))
-    except:
-        print("-1")
-    try:
         print("Median {}".format(math.floor(median(ages))))
     except:
         print("-1")
-    plt.title(f"Target: {name['first_name']} {name['last_name']}")
-    plt.grid(True)
-    plt.ylabel("Friends count")
-    plt.xlabel("Friends age")
-    plt.hist(ages)
-    plt.show()
-
+    build_graph(ages)
