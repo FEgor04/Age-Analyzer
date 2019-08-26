@@ -3,6 +3,17 @@ import pandas as pd
 from math import floor
 import statistics as st
 import numpy as np
+import matplotlib.pyplot as plt
+
+
+def people_with_open_profile(data):
+    count = 0
+    for i in range(0, data.__len__()):
+        if data["Mean"][i] == "PROFILE CLOSED":
+            pass
+        else:
+            count -= -1
+    return count
 
 def fill_vk_age(input_csv, output_csv):
     data = pd.read_csv(input_csv)
@@ -30,8 +41,10 @@ def fill_friends_age(input_csv, output_csv):
 
             try:
                 data["Mode"][i] = floor(st.mode(ages))
-            except:
+            except TypeError:
                 data["Mode"][i] = "PROFILE CLOSED"
+            except st.StatisticsError:
+                data["Mode"][i] = max(set(ages), key=ages.count)
 
             try:
                 data["Harmonic Mean"][i] = floor(st.harmonic_mean(ages))
@@ -43,8 +56,19 @@ def fill_friends_age(input_csv, output_csv):
             except:
                 data["Median"][i] = "PROFILE CLOSED"
 
+            try:
+                if ages == "PC":
+                    data["std"][i] = "PROFILE CLOSED"
+                else:
+                    ages_np = np.array(ages)
+                    data["std"][i] = floor(np.std(ages_np))
+            except:
+                data["std"][i] = "PROFILE CLOSED"
+
     df = pd.DataFrame(data)
+    df.fillna(0)
     print(df)
+
     df.to_csv(output_csv, index=False)
 
 def people_who_specified_age(data):
@@ -90,25 +114,38 @@ def fill_error_list(data):
     error_list_data = pd.DataFrame(data=error_list_dict)
     return error_list_data
 
+
 def fill_accuracy(data):
-    print(f"Data type: {type(data)}", end="\n\n")
     error_data = fill_error_list(data)
     mean_row = error_data["Mean"].value_counts()
     hmean_row = error_data["HMean"].value_counts()
     median_row = error_data["Median"].value_counts()
     mode_row = error_data["Mode"].value_counts()
-
     error_level_list = [0]
     accuracy_mean_list = [mean_row[0].item()]
     accurracy_hmean_list = [hmean_row[0].item()]
     accuracy_mode_list = [mode_row[0].item()]
     accuracy_median_list = [median_row[0].item()]
-    for i in range(1, data.__len__()):
+    for i in range(1, 30):
         error_level_list.append(i)
-        accuracy_mean_list.append(mean_row[i].item() + accuracy_mean_list[i-1])
-        accuracy_mode_list.append(mean_row[i].item() + accuracy_mode_list[i-1])
-        accuracy_median_list.append(mean_row[i].item() + accuracy_median_list[i-1])
-        accurracy_hmean_list.append(mean_row[i].item() + accurracy_hmean_list[i-1])
+        # print(type(mean_row[i].item()))
+        # print(type(accuracy_mean_list[i-1]))
+        try:
+            accuracy_mean_list.append(mean_row[i].item() + accuracy_mean_list[i-1])
+        except:
+            accuracy_mean_list.append(accuracy_mean_list[i-1])
+        try:
+            accuracy_median_list.append(median_row[i].item() + accuracy_median_list[i-1])
+        except:
+            accuracy_median_list.append(accuracy_median_list[i-1])
+        try:
+            accurracy_hmean_list.append(hmean_row[i].item() + accurracy_hmean_list[i-1])
+        except:
+            accurracy_hmean_list.append(accurracy_hmean_list[i-1])
+        try:
+            accuracy_mode_list.append(mode_row[i].item() + accuracy_mode_list[i-1])
+        except:
+            accuracy_mode_list.append(accuracy_mode_list[i-1])
     accuracy_dict = {
         "ErrorLevel": error_level_list,
         "Mean": accuracy_mean_list,
@@ -118,17 +155,31 @@ def fill_accuracy(data):
     }
     return pd.DataFrame(data=accuracy_dict)
 
+
+def build_graph(accuracy_data, count):
+    plt.plot(accuracy_data["Mean"]/count, label="Ср. Арифметическое")
+    plt.plot(accuracy_data["HMean"]/count, label="Ср. Гармоническое")
+    plt.plot(accuracy_data["Mode"]/count, label="Мода")
+    plt.plot(accuracy_data["Median"]/count, label="Медиана")
+    plt.grid(1)
+    plt.legend()
+    plt.show()
+
 def analyze(input_file):
     data = pd.read_csv(input_file)
     specified_age = people_who_specified_age(data)
     people_with_true_age = people_whose_vk_age_is_equal_to_real_age(data)
-    print(f"Number of people, who specified their age: {specified_age} ({round( (specified_age / data.__len__() * 100), 2 )} %)")
-    print(f"Number of people, whose vk age is equal to real age: {people_with_true_age} ({round( (people_with_true_age / data.__len__() * 100), 2)} %)")
-    print("-------------------------------------------------------------------------------------")
+    open_profile_count = people_with_open_profile(data)
+    print("+---------------------------------------------------------------------------------------+")
+    print(f"|Number of people, who specified their age: {specified_age} ({round( (specified_age / data.__len__() * 100), 2 )} %)\t\t\t\t\t|")
+    print(f"|Number of people, whose vk age is equal to real age: {people_with_true_age} ({round( (people_with_true_age / data.__len__() * 100), 2)} %)\t\t\t|")
+    print(f"|Number of people, whose vk profile is open: {open_profile_count} ({round( open_profile_count / data.__len__() * 100 , 2)} %)\t\t\t\t|")
+    print("+---------------------------------------------------------------------------------------+")
     # print(data)
     # error_list_data = fill_error_list(data)
     # print(error_list_data["Mean"]
     # print(error_list_data["Mean"].value_counts()[2])
     accuracy_data = fill_accuracy(data)
-    print(accuracy_data)
+    # print(accuracy_data)
+    build_graph(accuracy_data, open_profile_count)
     # print(data)

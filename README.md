@@ -4,7 +4,7 @@ Here is the settings.py sample.
 token = 'your_vk_token'
 version = 5.101
 target = "0"
-analyze = true
+analyze = True
 input_file = 'research.csv'
 output_file = 'research_analyzed.csv'
 analyze_file = 'research_analyzed.csv'
