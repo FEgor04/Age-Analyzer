@@ -129,7 +129,6 @@ def get_friends_bdate(target):
     try:
         return r.json()['response']['items']
     except KeyError:
-        # print("PROFILE CLOSED")
         return "PC"
 
 
@@ -191,58 +190,4 @@ def get_age_by_bdate(birth_date_str):
     age = math.floor(age / 365)
     return age
 
-
-# def get_school_graduation_year(target):
-#     r = requests.get("https:")
-
-
-# def build_graph(ages):
-#     ages_count = {}
-#     for person_age in ages:
-#         print(person_age, end=" ")
-#         try:
-#             ages_count[person_age] += 1
-#         except:
-#             ages_count.update({person_age: 0})
-#     plt.title(f"Target: {name['first_name']} {name['last_name']}")
-#     plt.grid(True)
-#     plt.ylabel("Friends count")
-#     plt.xlabel("Friends age")
-#     plt.bar(ages_count.keys(), ages_count.values())
-#     plt.show()
-#
-#     # if __name__ == "__main__":
-#     print("Print target's ID:", end=" ")
-#     target = input()
-#     ages = get_friends_ages(target)
-#     name = get_name(target)
-#     age = get_age(target)
-#
-#     print("")
-#     try:
-#         name = get_name(target)
-#         print("Target: {} {}".format(name['first_name'], name['last_name']))
-#     except:
-#         print("Something gone wrong")
-#
-#     print("Profile age: {}".format(age))
-#     print("Friends with age count: {}".format(len(ages)))
-#     print(ages)
-#     print("")
-#     try:
-#         print("Mean: {}".format(math.floor(mean(ages))))
-#     except:
-#         print("-1")
-#     try:
-#         print("Harmonic mean {}".format(math.floor(harmonic_mean(ages))))
-#     except:
-#         print("-1")
-#     try:
-#         print("Mode {}".format(math.floor(mode(ages))))
-#     except:
-#         print("-1")
-#     try:
-#         print("Median {}".format(math.floor(median(ages))))
-#     except:
-#         print("-1")
-#     build_graph(ages)
+(ages)

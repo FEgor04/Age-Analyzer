@@ -156,6 +156,34 @@ def fill_accuracy(data):
     return pd.DataFrame(data=accuracy_dict)
 
 
+def prepare_regression_dataset(filled_file, output_file):
+    filled_df = pd.read_csv(filled_file)
+    mean_list = []
+    mode_list = []
+    hmean_list = []
+    median_list = []
+    real_age_list = []
+    std_list = []
+
+    for i in range(0, filled_df.__len__()):
+        if filled_df["Mean"][i] != "PROFILE CLOSED":
+            mean_list.append(filled_df["Mean"][i])
+            mode_list.append(filled_df["Mode"][i])
+            median_list.append(filled_df["Median"][i])
+            hmean_list.append(filled_df["Harmonic Mean"][i])
+            real_age_list.append(filled_df["Real Age"][i])
+            std_list.append(filled_df["std"][i])
+    dict = {
+        "RealAge": real_age_list,
+        "Median": median_list,
+        "std": std_list,
+        "Mean": mean_list,
+        "Mode": mode_list,
+        "HMean": hmean_list
+    }
+    output_df = pd.DataFrame(data=dict)
+    output_df.to_csv(output_file, index=False)
+
 def build_graph(accuracy_data, count):
     plt.plot(accuracy_data["Mean"]/count, label="Ср. Арифметическое")
     plt.plot(accuracy_data["HMean"]/count, label="Ср. Гармоническое")
@@ -163,7 +191,10 @@ def build_graph(accuracy_data, count):
     plt.plot(accuracy_data["Median"]/count, label="Медиана")
     plt.grid(1)
     plt.legend()
+    plt.xlabel("j")
+    plt.ylabel("A (j)")
     plt.show()
+
 
 def analyze(input_file):
     data = pd.read_csv(input_file)
@@ -175,11 +206,6 @@ def analyze(input_file):
     print(f"|Number of people, whose vk age is equal to real age: {people_with_true_age} ({round( (people_with_true_age / data.__len__() * 100), 2)} %)\t\t\t|")
     print(f"|Number of people, whose vk profile is open: {open_profile_count} ({round( open_profile_count / data.__len__() * 100 , 2)} %)\t\t\t\t|")
     print("+---------------------------------------------------------------------------------------+")
-    # print(data)
-    # error_list_data = fill_error_list(data)
-    # print(error_list_data["Mean"]
-    # print(error_list_data["Mean"].value_counts()[2])
     accuracy_data = fill_accuracy(data)
-    # print(accuracy_data)
     build_graph(accuracy_data, open_profile_count)
     # print(data)
