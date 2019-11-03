@@ -24,7 +24,7 @@ def fill_vk_age(input_csv, output_csv):
         else:
             data["VK Age"][i] = "IS NOT SPECIFIED"
     df = pd.DataFrame(data)
-    df.to_csv(output_csv)
+    df.to_csv(output_csv, index=False)
 
 def fill_friends_age(input_csv, output_csv):
     data = pd.read_csv(input_csv)
@@ -113,6 +113,10 @@ def fill_error_list(data):
             pass
     error_list_data = pd.DataFrame(data=error_list_dict)
     return error_list_data
+
+
+def get_age_with_equation():
+    return 0
 
 
 def fill_accuracy(data):

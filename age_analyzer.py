@@ -3,9 +3,46 @@
 import datetime
 import math
 from statistics import mean, mode, median, harmonic_mean, pvariance
-# import matplotlib.pyplot as plt
+import matplotlib.pylab as plt
 import requests
 import settings
+import numpy as np
+import statistics
+import statistics as st
+
+
+def find_max_mode(list1):
+    list_table = statistics._counts(list1)
+    len_table = len(list_table)
+
+    if len_table == 1:
+        max_mode = statistics.mode(list1)
+    else:
+        new_list = []
+        for i in range(len_table):
+            new_list.append(list_table[i][0])
+        max_mode = max(new_list)
+    return max_mode
+
+
+
+def get_age_with_equation(target):
+    ages = get_friends_ages(target)
+    print(ages)
+    numpy_list = np.array(ages)
+    mode = find_max_mode(ages)
+    try:
+        median = st.median(ages)
+    except:
+        return -1
+    hmean = math.floor(harmonic_mean(ages))
+    mean = math.floor( st.mean(ages))
+    std = numpy_list.std()
+
+    estimated_age = settings.mean_k * mean + settings.hmean_k * hmean + settings.median_k * median + settings.free_k + settings.mode_k * mode + settings.std_k * std
+
+    return estimated_age
+
 
 
 def is_profile_closed(target):
@@ -16,9 +53,14 @@ def is_profile_closed(target):
         "fields": "",
         "name_case": "Nom"
     })
-    data = r.json()['response'][0]
-
-    return not(data['can_access_closed'] or data['is_closed'])
+    try:
+        data = r.json()['response'][0]
+    except:
+        return True
+    try:
+        return not(data['can_access_closed'] or data['is_closed'])
+    except:
+        return True
 
 
 def get_bdate(target):
@@ -161,6 +203,18 @@ def get_age(target):
     age = math.floor(age / 365)
     return age
 
+def build_friends_age_hist(target):
+    ages = get_friends_ages(target)
+    count = ages.__len__()
+    ages_Np = np.array(ages)
+    # print(ages_Np)
+    bar = plt.hist(ages)
+    return bar
+    # print("\n\n")
+    # print(bar)
+    # bar.show()
+
+
 
 def get_age_by_bdate(birth_date_str):
     today_date = datetime.datetime.today()
@@ -190,4 +244,3 @@ def get_age_by_bdate(birth_date_str):
     age = math.floor(age / 365)
     return age
 
-(ages)
