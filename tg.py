@@ -7,7 +7,6 @@ import math
 
 bot = telebot.TeleBot(settings.tg_api)
 
-
 def log(event, text, file):
     read = open(file, 'r')
     input = read.read()
@@ -26,7 +25,10 @@ def answer(message):
     except:
         to_build = "ddd"
     log("REQUEST", f"{by} wants to analyze {to_build}", "log/telegram.log")
-    if age_analyzer.is_profile_closed(to_build):
+    ages = age_analyzer.get_friends_ages(to_build)
+    print(ages)
+    print(ages == "PC")
+    if age_analyzer.is_profile_closed(to_build) or ages == "PC":
         log("RESPONSE", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
         bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
     else:
@@ -46,7 +48,8 @@ def build_histogram(message):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     to_build = (message.text.split(' '))[1]
     log("REQUEST", f"{by} wants to build graph {message.text}", "log/telegram.log")
-    if age_analyzer.is_profile_closed(to_build):
+    ages = age_analyzer.get_friends_ages(to_build)
+    if age_analyzer.is_profile_closed(to_build) or ages == "PC":
         log("RESPONSE", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
         bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
     else:
@@ -55,6 +58,7 @@ def build_histogram(message):
         target_name = age_analyzer.get_name(to_build)
         # target_age = age_analyzer.get_age(to_build)
         ages = age_analyzer.get_friends_ages(target=to_build)
+
         hist = plt.hist(ages)
         plt.grid(1)
         plt.xlim(0, 60)
