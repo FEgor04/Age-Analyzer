@@ -35,24 +35,23 @@ def fill_friends_age(input_csv, output_csv):
         else:
             ages = analyzer.get_friends_ages(data["ID"][i])
             try:
-                data["Mean"][i] = floor(st.mean(ages))
+                mean = (10*floor(st.mean(ages)))//10
+                data["Mean"][i] = mean
             except:
                 data["Mean"][i] = "PROFILE CLOSED"
 
             try:
-                data["Mode"][i] = floor(st.mode(ages))
+                data["Mode"][i] = (10*floor(max(set(ages), key=ages.count)))//10
             except TypeError:
                 data["Mode"][i] = "PROFILE CLOSED"
-            except st.StatisticsError:
-                data["Mode"][i] = max(set(ages), key=ages.count)
 
             try:
-                data["Harmonic Mean"][i] = floor(st.harmonic_mean(ages))
+                data["Harmonic Mean"][i] = 10*floor(st.harmonic_mean(ages))//10
             except:
                 data["Harmonic Mean"][i] = "PROFILE CLOSED"
 
             try:
-                data["Median"][i] = floor(st.median(ages))
+                data["Median"][i] = 10*floor(st.median(ages))//10
             except:
                 data["Median"][i] = "PROFILE CLOSED"
 
@@ -99,12 +98,22 @@ def fill_error_list(data):
     # print(type(columns))
     # print(columns)
     # print(error_list_data)
+    print(data)
     for i in range(0, data.__len__()):
-        if data["Mean"][i] != "PROFILE CLOSED" and data["Mode"][i] != "PROFILE CLOSED" and data["Median"][i] != "PROFILE CLOSED" and data["Harmonic Mean"][i] != "PROFILE CLOSED":
-            mean_error = abs(int(data["Mean"][i]) - int(data["Real Age"][i]))
-            hmean_error = abs(int(data["Harmonic Mean"][i]) - int(data["Real Age"][i]))
-            median_error = abs(int(data["Median"][i]) - int(data["Real Age"][i]))
-            mode_error = abs(int(data["Mode"][i]) - int(data["Real Age"][i]))
+        real_age = int(data["Real Age"][i])
+        # print(real_age)
+        # print()
+        # print()
+        # print()
+        # print()
+        # print(f'{data["Mean"][i]} \t {data["Harmonic Mean"][i]} \t {data["Mode"][i]} \t {data["Median"][i]}')
+        if data["Mean"][i] != "PROFILE CLOSED":
+            # print(f'{data["Mean"][i]} \t {data["Harmonic Mean"][i]} \t {data["Mode"][i]} \t {data["Median"][i]}')
+
+            mean_error = abs(int(data["Mean"][i]) - real_age)
+            hmean_error = abs(int(data["Harmonic Mean"][i]) - real_age)
+            median_error = abs(int(data["Median"][i]) - real_age)
+            mode_error = abs(int(data["Mode"][i]) - real_age)
             error_list_dict["Mean"].append(mean_error)
             error_list_dict["HMean"].append(hmean_error)
             error_list_dict["Median"].append(median_error)
@@ -112,6 +121,7 @@ def fill_error_list(data):
         else:
             pass
     error_list_data = pd.DataFrame(data=error_list_dict)
+    # print(error_list_data)
     return error_list_data
 
 
@@ -121,6 +131,7 @@ def get_age_with_equation():
 
 def fill_accuracy(data):
     error_data = fill_error_list(data)
+    # print(error_data)
     mean_row = error_data["Mean"].value_counts()
     hmean_row = error_data["HMean"].value_counts()
     median_row = error_data["Median"].value_counts()
@@ -210,6 +221,7 @@ def analyze(input_file):
     print(f"|Number of people, whose vk age is equal to real age: {people_with_true_age} ({round( (people_with_true_age / data.__len__() * 100), 2)} %)\t\t\t|")
     print(f"|Number of people, whose vk profile is open: {open_profile_count} ({round( open_profile_count / data.__len__() * 100 , 2)} %)\t\t\t\t|")
     print("+---------------------------------------------------------------------------------------+")
+    print(data)
     accuracy_data = fill_accuracy(data)
     build_graph(accuracy_data, open_profile_count)
     # print(data)

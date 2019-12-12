@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import settings
 import datetime
 import age_analyzer
+import statistics as st
 import math
 
 bot = telebot.TeleBot(settings.tg_api)
@@ -15,6 +16,22 @@ def log(event, text, file):
     log_text = f"{now}::{event}::{text}"
     f = open(file, 'w')
     f.write(input + log_text + '\n')
+
+
+def find_max_mode(list1):
+    list_table = statistics._counts(list1)
+    len_table = len(list_table)
+
+    if len_table == 1:
+        max_mode = statistics.mode(list1)
+    else:
+        new_list = []
+        for i in range(len_table):
+            new_list.append(list_table[i][0])
+        max_mode = max(new_list)
+    return max_mode
+
+
 
 
 @bot.message_handler(commands=['analyze'])
@@ -38,8 +55,12 @@ def answer(message):
         target_age = age_analyzer.get_age(to_build)
         if target_age == -1:
             target_age = "не указан"
+        friends_ages = age_analyzer.get_friends_ages(to_build)
         estimated_age = age_analyzer.get_age_with_equation(to_build)
-        response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}.\nВозраст, указанный в профиле - {target_age}.\nОднако, мы полагаем, что настоящий возраст - {round(estimated_age, 2)}"
+        response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}." \
+                   f"\nВозраст, указанный в профиле - {target_age}.\n" \
+                   f"Однако, мы полагаем, что настоящий возраст - {round(estimated_age, 2)}\n" \
+                   f"Мода - {find_max_mode(friends_ages)}. Медиана - {st.median(friends_ages)} Среднее гармоничное - {st.harmonic_mean(friends_ages)} Среднее арифметическое - {st.mean(friends_ages)}"
         bot.send_message(message.chat.id, response)
         log("RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
 
