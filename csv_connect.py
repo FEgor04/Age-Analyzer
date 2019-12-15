@@ -15,6 +15,14 @@ def people_with_open_profile(data):
             count -= -1
     return count
 
+def find_average_mode(arr):
+    list_table = st._counts(arr)
+    len_table = len(list_table)
+    new_list = []
+    for i in range(len_table):
+        new_list.append(list_table[i][0])
+    return int(st.mean(new_list))
+
 def fill_vk_age(input_csv, output_csv):
     data = pd.read_csv(input_csv)
     for i in range(0, data.__len__()):
@@ -41,7 +49,7 @@ def fill_friends_age(input_csv, output_csv):
                 data["Mean"][i] = "PROFILE CLOSED"
 
             try:
-                data["Mode"][i] = (10*floor(max(set(ages), key=ages.count)))//10
+                data["Mode"][i] = find_average_mode(ages)
             except TypeError:
                 data["Mode"][i] = "PROFILE CLOSED"
 

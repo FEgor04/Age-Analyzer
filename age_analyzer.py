@@ -25,6 +25,15 @@ def find_max_mode(list1):
     return max_mode
 
 
+def find_average_mode(arr):
+    list_table = statistics._counts(arr)
+    len_table = len(list_table)
+    new_list = []
+    for i in range(len_table):
+        new_list.append(list_table[i][0])
+    return int(statistics.mean(new_list))
+
+
 
 def get_age_with_equation(target):
     ages = get_friends_ages(target)

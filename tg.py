@@ -19,11 +19,11 @@ def log(event, text, file):
 
 
 def find_max_mode(list1):
-    list_table = statistics._counts(list1)
+    list_table = st._counts(list1)
     len_table = len(list_table)
 
     if len_table == 1:
-        max_mode = statistics.mode(list1)
+        max_mode = st.mode(list1)
     else:
         new_list = []
         for i in range(len_table):
@@ -31,6 +31,13 @@ def find_max_mode(list1):
         max_mode = max(new_list)
     return max_mode
 
+def find_average_mode(arr):
+    list_table = st._counts(arr)
+    len_table = len(list_table)
+    new_list = []
+    for i in range(len_table):
+        new_list.append(list_table[i][0])
+    return int(st.mean(new_list))
 
 
 
@@ -60,7 +67,7 @@ def answer(message):
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}." \
                    f"\nВозраст, указанный в профиле - {target_age}.\n" \
                    f"Однако, мы полагаем, что настоящий возраст - {round(estimated_age, 2)}\n" \
-                   f"Мода - {find_max_mode(friends_ages)}. Медиана - {st.median(friends_ages)} Среднее гармоничное - {st.harmonic_mean(friends_ages)} Среднее арифметическое - {st.mean(friends_ages)}"
+                   f"Мода - {round(find_average_mode(friends_ages), 2)}. Медиана - {round(st.median(friends_ages), 2)} Среднее гармоничное - {round(st.harmonic_mean(friends_ages), 2)} Среднее арифметическое - {round(st.mean(friends_ages), 2)}"
         bot.send_message(message.chat.id, response)
         log("RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
 
