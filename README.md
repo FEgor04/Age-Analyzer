@@ -10,13 +10,13 @@ output_file = 'research_analyzed.csv'
 analyze_file = 'research_analyzed.csv'
 ```
 
-####How to analyze someone`s age:
+#### How to analyze someone's age:
 Set **target** variable equal to target's id or short link
 
 If target's profile age is -1, then the year of birth is not defined on target's page.
 <hr>
 
-####How to analyze .csv file:
+#### How to analyze .csv file:
 Set analyze variable in **settings.py** = *True*. Then, create input file.  
 It should be formed like: 
 ```csv
