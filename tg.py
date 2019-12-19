@@ -4,9 +4,17 @@ import settings
 import datetime
 import age_analyzer
 import statistics as st
+import neuroanalyzer as neuro
 import math
 
 bot = telebot.TeleBot(settings.tg_api)
+neuronet = neuro.neuralNetwork()
+llesss_ages = age_analyzer.get_friends_ages("llesss")
+# print(f"\n\n\n{llesss_ages}")
+try:
+    neuronet.open_model(settings.neuronet_file)
+except:
+    neuronet.train('csv/age_research_filled.csv')
 
 def log(event, text, file):
     read = open(file, 'r')
@@ -63,11 +71,12 @@ def answer(message):
         if target_age == -1:
             target_age = "не указан"
         friends_ages = age_analyzer.get_friends_ages(to_build)
-        estimated_age = age_analyzer.get_age_with_equation(to_build)
-        response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}." \
-                   f"\nВозраст, указанный в профиле - {target_age}.\n" \
-                   f"Однако, мы полагаем, что настоящий возраст - {round(estimated_age, 2)}\n" \
-                   f"Мода - {round(find_average_mode(friends_ages), 2)}. Медиана - {round(st.median(friends_ages), 2)} Среднее гармоничное - {round(st.harmonic_mean(friends_ages), 2)} Среднее арифметическое - {round(st.mean(friends_ages), 2)}"
+        print(f"ID: {to_build}. Ages: {friends_ages}")
+
+        predicted = neuronet.query(friends_ages)
+
+
+        response = f"\nВозраст, указанный в профиле - {target_age}.\n Однако, мы полагаем, что настоящий возраст - {predicted}"
         bot.send_message(message.chat.id, response)
         log("RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
 

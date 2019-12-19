@@ -150,37 +150,8 @@ def get_friends(target, count):
     return all_data
 
 
-def get_friends_ages(target):
-    friends_bdate = get_friends_bdate(target)
-    ages = []
-    age = -1
-    if friends_bdate == "PC":
-        return "PC"
-    for person in friends_bdate:
-        try:
-            age = get_age_by_bdate(person['bdate'])
-        except:
-            pass
-        if age != -1:
-            ages.append(age)
-    return ages
 
 
-def get_friends_bdate(target):
-    target_id = get_id_by_domain(target)
-    r = requests.get("https://api.vk.com/method/friends.get", params={
-        "v": settings.version,
-        "access_token": settings.token,
-        "user_id": target_id,
-        "order": "name",
-        "fields": "bdate",
-        "name_case": "nom",
-        "count": "10000"
-    })
-    try:
-        return r.json()['response']['items']
-    except KeyError:
-        return "PC"
 
 
 def get_age(target):
@@ -212,6 +183,7 @@ def get_age(target):
     age = math.floor(age / 365)
     return age
 
+
 def build_friends_age_hist(target):
     ages = get_friends_ages(target)
     count = ages.__len__()
@@ -223,6 +195,38 @@ def build_friends_age_hist(target):
     # print(bar)
     # bar.show()
 
+
+def get_friends_ages(target):
+    friends_bdate = get_friends_bdate(target)
+    ages = []
+    age = -1
+    if friends_bdate == "PC":
+        return "PC"
+    for person in friends_bdate:
+        try:
+            age = get_age_by_bdate(person['bdate'])
+        except:
+            pass
+        if age != -1:
+            ages.append(age)
+    return ages
+
+
+def get_friends_bdate(target):
+    target_id = get_id_by_domain(target)
+    r = requests.get("https://api.vk.com/method/friends.get", params={
+        "v": settings.version,
+        "access_token": settings.token,
+        "user_id": target_id,
+        "order": "name",
+        "fields": "bdate",
+        "name_case": "nom",
+        "count": "10000"
+    })
+    try:
+        return r.json()['response']['items']
+    except KeyError:
+        return "PC"
 
 
 def get_age_by_bdate(birth_date_str):

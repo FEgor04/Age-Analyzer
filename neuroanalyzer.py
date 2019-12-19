@@ -5,6 +5,7 @@ import statistics as st
 import datetime
 import pickle
 import numpy as np
+import settings
 
 def find_average_mode(arr):
     list_table = st._counts(arr)
@@ -28,6 +29,8 @@ class neuralNetwork:
         std_arr_train = []
         real_age_arr_train = []
         for i in range(len(df)):
+            print(df)
+            print(df["Mean"][i])
             if df["Mean"][i] != "PROFILE CLOSED":
                 mean_arr_train.append(df["Mean"][i]);
                 hmean_arr_train.append(df["Harmonic Mean"][i]);
@@ -54,6 +57,7 @@ class neuralNetwork:
         self.y_train_df = pd.DataFrame(self.y_train_dict)
         self.reg.fit(self.x_train_df, self.y_train_df)
         self.log("MODEL TRAINED", f"Model trained successfully. Data length: {len(self.x_train_df)}", "log/neuroanalyzer.log")
+        self.save_model(settings.neuronet_file)
 
 
     def save_model(self, filename):
@@ -67,14 +71,17 @@ class neuralNetwork:
 
 
     def query(self, ages):
-        mean = st.mean(ages)
-        median = st.median(ages)
-        hmean = st.harmonic_mean(ages)
-        mode = find_average_mode(ages)
-        std = np.array(ages).std()
+        mean = round(st.mean(ages), 0)
+        median = round(st.median(ages), 0)
+        hmean = round(st.harmonic_mean(ages), 0)
+        mode = round(find_average_mode(ages), 0)
+        std = round(np.array(ages).std(), 0)
         predicted = self.reg.predict([[mean, hmean, mode, median, std]])
-        predicted = float(predicted, 2)
-        self.log("QUERY", f"Predicted successfully. Result: {predicted}.", "log/neuroanalyzer.log")
+        predicted = round(predicted[0][0], 2)
+        # print(f"\n\n\npredicted: {predicted} \n\n\n")
+        self.log("QUERY", f"Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}.", "log/neuroanalyzer.log")
+        self.save_model(settings.neuronet_file)
+        return predicted
 
 
     def log(self, event, text, file):

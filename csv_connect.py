@@ -15,6 +15,7 @@ def people_with_open_profile(data):
             count -= -1
     return count
 
+
 def find_average_mode(arr):
     list_table = st._counts(arr)
     len_table = len(list_table)
@@ -22,6 +23,7 @@ def find_average_mode(arr):
     for i in range(len_table):
         new_list.append(list_table[i][0])
     return int(st.mean(new_list))
+
 
 def fill_vk_age(input_csv, output_csv):
     data = pd.read_csv(input_csv)
@@ -34,6 +36,7 @@ def fill_vk_age(input_csv, output_csv):
     df = pd.DataFrame(data)
     df.to_csv(output_csv, index=False)
 
+
 def fill_friends_age(input_csv, output_csv):
     data = pd.read_csv(input_csv)
     for i in range(0, data.__len__()):
@@ -42,24 +45,25 @@ def fill_friends_age(input_csv, output_csv):
             pass
         else:
             ages = analyzer.get_friends_ages(data["ID"][i])
+            print(f"ID: {data['ID'][i]}. Ages: {ages} ")
             try:
-                mean = (10*floor(st.mean(ages)))//10
+                mean = int(round(st.mean(ages), 0))
                 data["Mean"][i] = mean
             except:
                 data["Mean"][i] = "PROFILE CLOSED"
 
             try:
-                data["Mode"][i] = find_average_mode(ages)
+                data["Mode"][i] = int(find_average_mode(ages))
             except TypeError:
                 data["Mode"][i] = "PROFILE CLOSED"
 
             try:
-                data["Harmonic Mean"][i] = 10*floor(st.harmonic_mean(ages))//10
+                data["Harmonic Mean"][i] = int(round(st.harmonic_mean(ages), 0))
             except:
                 data["Harmonic Mean"][i] = "PROFILE CLOSED"
 
             try:
-                data["Median"][i] = 10*floor(st.median(ages))//10
+                data["Median"][i] = int(round(st.median(ages), 0))
             except:
                 data["Median"][i] = "PROFILE CLOSED"
 
@@ -68,12 +72,11 @@ def fill_friends_age(input_csv, output_csv):
                     data["std"][i] = "PROFILE CLOSED"
                 else:
                     ages_np = np.array(ages)
-                    data["std"][i] = floor(np.std(ages_np))
+                    data["std"][i] = int(round(np.std(ages_np), 0))
             except:
                 data["std"][i] = "PROFILE CLOSED"
 
     df = pd.DataFrame(data)
-    df.fillna(0)
     print(df)
 
     df.to_csv(output_csv, index=False)
@@ -133,92 +136,6 @@ def fill_error_list(data):
     return error_list_data
 
 
-def get_age_with_equation():
-    return 0
-
-
-def fill_accuracy(data):
-    error_data = fill_error_list(data)
-    # print(error_data)
-    mean_row = error_data["Mean"].value_counts()
-    hmean_row = error_data["HMean"].value_counts()
-    median_row = error_data["Median"].value_counts()
-    mode_row = error_data["Mode"].value_counts()
-    error_level_list = [0]
-    accuracy_mean_list = [mean_row[0].item()]
-    accurracy_hmean_list = [hmean_row[0].item()]
-    accuracy_mode_list = [mode_row[0].item()]
-    accuracy_median_list = [median_row[0].item()]
-    for i in range(1, 30):
-        error_level_list.append(i)
-        # print(type(mean_row[i].item()))
-        # print(type(accuracy_mean_list[i-1]))
-        try:
-            accuracy_mean_list.append(mean_row[i].item() + accuracy_mean_list[i-1])
-        except:
-            accuracy_mean_list.append(accuracy_mean_list[i-1])
-        try:
-            accuracy_median_list.append(median_row[i].item() + accuracy_median_list[i-1])
-        except:
-            accuracy_median_list.append(accuracy_median_list[i-1])
-        try:
-            accurracy_hmean_list.append(hmean_row[i].item() + accurracy_hmean_list[i-1])
-        except:
-            accurracy_hmean_list.append(accurracy_hmean_list[i-1])
-        try:
-            accuracy_mode_list.append(mode_row[i].item() + accuracy_mode_list[i-1])
-        except:
-            accuracy_mode_list.append(accuracy_mode_list[i-1])
-    accuracy_dict = {
-        "ErrorLevel": error_level_list,
-        "Mean": accuracy_mean_list,
-        "HMean": accurracy_hmean_list,
-        "Mode": accuracy_mode_list,
-        "Median": accuracy_median_list
-    }
-    return pd.DataFrame(data=accuracy_dict)
-
-
-def prepare_regression_dataset(filled_file, output_file):
-    filled_df = pd.read_csv(filled_file)
-    mean_list = []
-    mode_list = []
-    hmean_list = []
-    median_list = []
-    real_age_list = []
-    std_list = []
-
-    for i in range(0, filled_df.__len__()):
-        if filled_df["Mean"][i] != "PROFILE CLOSED":
-            mean_list.append(filled_df["Mean"][i])
-            mode_list.append(filled_df["Mode"][i])
-            median_list.append(filled_df["Median"][i])
-            hmean_list.append(filled_df["Harmonic Mean"][i])
-            real_age_list.append(filled_df["Real Age"][i])
-            std_list.append(filled_df["std"][i])
-    dict = {
-        "RealAge": real_age_list,
-        "Median": median_list,
-        "std": std_list,
-        "Mean": mean_list,
-        "Mode": mode_list,
-        "HMean": hmean_list
-    }
-    output_df = pd.DataFrame(data=dict)
-    output_df.to_csv(output_file, index=False)
-
-def build_graph(accuracy_data, count):
-    plt.plot(accuracy_data["Mean"]/count, label="Ср. Арифметическое")
-    plt.plot(accuracy_data["HMean"]/count, label="Ср. Гармоническое")
-    plt.plot(accuracy_data["Mode"]/count, label="Мода")
-    plt.plot(accuracy_data["Median"]/count, label="Медиана")
-    plt.grid(1)
-    plt.legend()
-    plt.xlabel("j")
-    plt.ylabel("A (j)")
-    plt.show()
-
-
 def analyze(input_file):
     data = pd.read_csv(input_file)
     specified_age = people_who_specified_age(data)
@@ -230,6 +147,4 @@ def analyze(input_file):
     print(f"|Number of people, whose vk profile is open: {open_profile_count} ({round( open_profile_count / data.__len__() * 100 , 2)} %)\t\t\t\t|")
     print("+---------------------------------------------------------------------------------------+")
     print(data)
-    accuracy_data = fill_accuracy(data)
-    build_graph(accuracy_data, open_profile_count)
     # print(data)
