@@ -2,13 +2,11 @@
 
 import datetime
 import math
-from statistics import mean, mode, median, harmonic_mean, pvariance
-import matplotlib.pylab as plt
-import requests
-import settings
-import numpy as np
 import statistics
-import statistics as st
+
+import requests
+
+import settings
 
 
 def find_max_mode(list1):
@@ -32,26 +30,6 @@ def find_average_mode(arr):
     for i in range(len_table):
         new_list.append(list_table[i][0])
     return int(statistics.mean(new_list))
-
-
-
-def get_age_with_equation(target):
-    ages = get_friends_ages(target)
-    print(ages)
-    numpy_list = np.array(ages)
-    mode = find_max_mode(ages)
-    try:
-        median = st.median(ages)
-    except:
-        return -1
-    hmean = math.floor(harmonic_mean(ages))
-    mean = math.floor( st.mean(ages))
-    std = numpy_list.std()
-
-    estimated_age = settings.mean_k * mean + settings.hmean_k * hmean + settings.median_k * median + settings.free_k + settings.mode_k * mode + settings.std_k * std
-
-    return estimated_age
-
 
 
 def is_profile_closed(target):
@@ -119,7 +97,7 @@ def get_friends(target, count):
     r = requests.get("https://api.vk.com/method/friends.get", params={
         "v": settings.version,
         "access_token": settings.token,
-        "user_id": target,
+        "user_id": get_id_by_domain(target),
         "order": "name",
         "count": count,
         "fields": "nickname"
@@ -127,26 +105,26 @@ def get_friends(target, count):
     r = r.json()
     try:
         data = r['response']['items']
+        all_data.extend(data)
     except:
         return -1
-    all_data.extend(data)
     if count > 5000:
         r = requests.get("https://api.vk.com/method/friends.get", params={
             "v": settings.version,
             "access_token": settings.token,
-            "user_id": target,
+            "user_id": get_id_by_domain(target),
             "order": "name",
             "count": count - 5000,
             "offset": 5000,
             "fields": "nickname",
             "name_case": "nom"
         })
-        data = r.json()
+        r = r.json()
         try:
-            data = data['response']['items']
+            data = r['response']['items']
+            all_data.extend(data)
         except:
             return -1
-        all_data.extend(data)
     return all_data
 
 
@@ -182,18 +160,6 @@ def get_age(target):
     age = age - age / 366
     age = math.floor(age / 365)
     return age
-
-
-def build_friends_age_hist(target):
-    ages = get_friends_ages(target)
-    count = ages.__len__()
-    ages_Np = np.array(ages)
-    # print(ages_Np)
-    bar = plt.hist(ages)
-    return bar
-    # print("\n\n")
-    # print(bar)
-    # bar.show()
 
 
 def get_friends_ages(target):
@@ -256,4 +222,3 @@ def get_age_by_bdate(birth_date_str):
     age = age - age / 366
     age = math.floor(age / 365)
     return age
-

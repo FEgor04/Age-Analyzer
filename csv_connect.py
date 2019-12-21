@@ -1,9 +1,9 @@
-import age_analyzer as analyzer
-import pandas as pd
-from math import floor
 import statistics as st
+
 import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd
+
+import age_analyzer as analyzer
 
 
 def people_with_open_profile(data):
@@ -81,12 +81,14 @@ def fill_friends_age(input_csv, output_csv):
 
     df.to_csv(output_csv, index=False)
 
+
 def people_who_specified_age(data):
     count  = 0
     for i in range(0, data.__len__()):
         if data["VK Age"][i] != "IS NOT SPECIFIED":
             count += 1
     return count
+
 
 def people_whose_vk_age_is_equal_to_real_age(data):
     count = 0
