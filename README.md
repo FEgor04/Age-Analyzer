@@ -10,7 +10,7 @@ analyze = True
 log_needed = False
                     # If you want to launch telegram bot you will also need this:
 tg_api = 'your_telegram_token'
-#   If you need logging:
+                    # If you need logging:
 log_needed = True
 ```
 #### How to analyze someone's age:
