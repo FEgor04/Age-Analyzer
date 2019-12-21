@@ -15,11 +15,11 @@ log_needed = True
 ```
 #### How to analyze someone's age:
 Set ``target`` variable equal to target's id or short link <br>
-Then set `analyze = True` <br>
 Then launch `__main__.py` file with this:
 ```
 $ python __main__.py
 ```
+Script will ask you to input target's ID, and then it will print his age.
 <hr>
 
 #### NEED HELP

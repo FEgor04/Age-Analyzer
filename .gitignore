@@ -1,1 +1,5 @@
 settings.py
+/presentation/
+/csv/
+Pipfile
+Pipfile.lock
