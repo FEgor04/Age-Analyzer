@@ -22,6 +22,13 @@ def launch() -> object:
 
 
 def log(event, text, file):
+    """
+
+    :param event: what happened
+    :param text: description
+    :param file: where to log
+    :return Makes log formatted like this: TIME::EVENT::TEXT. It will put it in file
+    """
     read = open(file, 'r')
     file_text = read.read()
     read.close()
@@ -32,6 +39,11 @@ def log(event, text, file):
 
 
 def find_max_mode(list1):
+    """
+
+    :param list1: list, mode of each you want to get
+    :return max_mode. If there are many modes, it will return maximal of them
+    """
     list_table = st._counts(list1)
     len_table = len(list_table)
 
@@ -46,6 +58,11 @@ def find_max_mode(list1):
 
 
 def find_average_mode(arr):
+    """
+
+    :param arr: list, mode of each you want to get
+    :return mode. If there are many modes, it will return average of them
+    """
     list_table = st._counts(arr)
     len_table = len(list_table)
     new_list = []

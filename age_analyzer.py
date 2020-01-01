@@ -10,6 +10,11 @@ import settings
 
 
 def find_max_mode(list1):
+    """
+
+    :param list1: list, mode of each you want to get
+    :return max_mode. If there are many modes, it will return maximal of them
+    """
     list_table = statistics._counts(list1)
     len_table = len(list_table)
 
@@ -24,6 +29,11 @@ def find_max_mode(list1):
 
 
 def find_average_mode(arr):
+    """
+
+    :param arr: list, mode of each you want to get
+    :return mode. If there are many modes, it will return average of them
+    """
     list_table = statistics._counts(arr)
     len_table = len(list_table)
     new_list = []
@@ -33,6 +43,11 @@ def find_average_mode(arr):
 
 
 def is_profile_closed(target):
+    """
+
+    :param target: VK id
+    :return True if profile is closed. False if it is not
+    """
     r = requests.get("https://api.vk.com/method/users.get", params={
         "v": settings.version,
         "access_token": settings.token,
@@ -51,6 +66,11 @@ def is_profile_closed(target):
 
 
 def get_bdate(target):
+    """
+
+    :param target: VK id
+    :return target's birth date
+    """
     r = requests.get("https://api.vk.com/method/users.get", params={
         "v": settings.version,
         "access_token": settings.token,
@@ -65,6 +85,11 @@ def get_bdate(target):
 
 
 def get_name(target):
+    """
+
+    :param target: VK id
+    :return target's name
+    """
     r = requests.get("https://api.vk.com/method/users.get", params={
         "v": settings.version,
         "access_token": settings.token,
@@ -79,6 +104,11 @@ def get_name(target):
 
 
 def get_id_by_domain(target):
+    """
+
+    :param target: VK domain
+    :return target's ID by his domain
+    """
     r = requests.get("https://api.vk.com/method/users.get", params={
         "v": settings.version,
         "access_token": settings.token,
@@ -93,6 +123,12 @@ def get_id_by_domain(target):
 
 
 def get_friends(target, count):
+    """
+
+    :param target: VK id
+    :param count: count of friends you want to get
+    :return: dict with target's friends
+    """
     all_data = []
     r = requests.get("https://api.vk.com/method/friends.get", params={
         "v": settings.version,
@@ -128,11 +164,12 @@ def get_friends(target, count):
     return all_data
 
 
-
-
-
-
 def get_age(target):
+    """
+
+    :param target: VK id
+    :return target's age by his VK id
+    """
     birth_date_str = get_bdate(target)
     today_date = datetime.datetime.today()
     if birth_date_str == -1:
@@ -163,6 +200,11 @@ def get_age(target):
 
 
 def get_friends_ages(target):
+    """
+
+    :param target: VK id
+    :return friend's ages
+    """
     friends_bdate = get_friends_bdate(target)
     ages = []
     age = -1
@@ -179,6 +221,11 @@ def get_friends_ages(target):
 
 
 def get_friends_bdate(target):
+    """
+
+    :param target: friends' birth dates
+    :return:
+    """
     target_id = get_id_by_domain(target)
     r = requests.get("https://api.vk.com/method/friends.get", params={
         "v": settings.version,
@@ -196,6 +243,11 @@ def get_friends_bdate(target):
 
 
 def get_age_by_bdate(birth_date_str):
+    """
+
+    :param birth_date_str: birth_date (string) it is like DD.MM.YYYY
+    :return: age
+    """
     today_date = datetime.datetime.today()
     if birth_date_str == -1:
         return -1

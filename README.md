@@ -1,4 +1,18 @@
-At first, you should create settings.py.
+
+####Install
+At first, make sure you have this libraries: <br>
+ `requests` <br>
+ `numpy` <br>
+ `pandas` <br>
+ `sklearn` <br>
+ `matplotlib` <br>
+ `pyTelegramBotAPI`
+ <br>
+ And, if they are not, install them with this command:
+```shell script
+pip3 install requests numpy pandas sklearn matplotlib pyTelegramBotAPI
+```
+Then, you should create settings.py.
 Here is the settings.py sample.
 ```python
 token = 'your_vk_token'
@@ -16,8 +30,8 @@ log_needed = True
 #### How to analyze someone's age:
 Set ``target`` variable equal to target's id or short link <br>
 Then launch `__main__.py` file with this:
-```
-$ python __main__.py
+```shell script
+python __main__.py
 ```
 Script will ask you to input target's ID, and then it will print his age.
 <hr>

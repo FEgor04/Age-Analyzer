@@ -10,6 +10,11 @@ import settings
 
 
 def find_average_mode(arr):
+    """"
+
+    :param arr: list, mode of each you want to get
+    :return mode. If there are many modes, it will return average of them
+    """
     list_table = st._counts(arr)
     len_table = len(list_table)
     new_list = []
@@ -19,6 +24,13 @@ def find_average_mode(arr):
 
 
 def log(event, text, file):
+    """
+
+    :param event: what happened
+    :param text: description
+    :param file: where to log
+    :return Makes log formatted like this: TIME::EVENT::TEXT. It will put it in file
+    """
     if settings.log_needed:
         read = open(file, 'r')
         file_text = read.read()
@@ -38,6 +50,11 @@ class NeuralNetwork:
         pass
 
     def prepare_data_from_df(self, df):
+        """
+
+        :param df: dataframe. Type: pandas.dataframe
+        :return: Creates y_train_dict and x_train_dict - pandas.dataframe to train neural network.
+        """
         mean_arr_train = []
         hmean_arr_train = []
         mode_arr_train = []
@@ -68,6 +85,11 @@ class NeuralNetwork:
             "log/neuroanalyzer.log")
 
     def train(self, df):
+        """
+
+        :param df: dataframe with input data
+        :return: saves model in settings.neuronet_file
+        """
         self.prepare_data_from_df(df)
         self.x_train_df = pd.DataFrame(self.x_train_dict)
         self.y_train_df = pd.DataFrame(self.y_train_dict)
@@ -77,14 +99,29 @@ class NeuralNetwork:
         self.save_model(settings.neuronet_file)
 
     def save_model(self, filename):
+        """
+
+        :param filename: file to save model in
+        :return: saves model in filename
+        """
         pickle.dump(self.reg, open(filename, 'wb'))
         log("MODEL SAVED", "Model saved successfully", "log/neuroanalyzer.log")
 
     def open_model(self, filename):
+        """
+
+        :param filename: file to open model from
+        :return: opens model from filename
+        """
         self.reg = pickle.load(open(filename, 'rb'))
         log("MODEL LOADED", "Model loaded successfully", "log/neuroanalyzer.log")
 
     def query(self, ages):
+        """
+
+        :param ages: list with ages
+        :return: estimated age by list with ages
+        """
         mean = round(st.mean(ages), 0)
         median = round(st.median(ages), 0)
         hmean = round(st.harmonic_mean(ages), 0)
