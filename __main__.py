@@ -5,7 +5,7 @@ import tg as telegram_bot
 
 if __name__ == "__main__":
     if settings.analyze:
-        print("Input target's ID", end=": ")
+        print("Input target's ID:", end=" ")
         target = input()
         neural_network = neuroanalyzer.NeuralNetwork
         neural_network.open_model(self=neural_network, filename=settings.neural_network_file)

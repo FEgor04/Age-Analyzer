@@ -177,21 +177,10 @@ def get_age(target):
     length = len(birth_date_str)
     if length < 8:
         return -1
-    birth_year = int(birth_date_str[length - 4]) * 1000 + int(birth_date_str[length - 3]) * 100 + int(
-        birth_date_str[length - 2]) * 10 + int(birth_date_str[length - 1])
-    birth_day = int(birth_date_str[0])
-    if birth_date_str[1] != '.':  # В дне рождения два символа.
-        birth_day *= 10
-        birth_day += int(birth_date_str[1])
-        if birth_date_str[4] != '.':  # В месяце рождения два символа
-            birth_month = int(birth_date_str[3]) * 10 + int(birth_date_str[4])
-        else:
-            birth_month = int(birth_date_str[3])
-    else:  # В дне рождения один символ
-        if birth_date_str[3] != '.':  # В месяце рождения два символа
-            birth_month = int(birth_date_str[2]) * 10 + int(birth_date_str[3])
-        else:  # В месяце рождения один символ
-            birth_month = int(birth_date_str[2])
+    birth_date_str_list = birth_date_str.split('.')
+    birth_year = int(birth_date_str_list[3])
+    birth_month = int(birth_date_str_list[1])
+    birth_day = int(birth_date_str_list[0])
     birth_date = datetime.date(birth_year, birth_month, birth_day)
     age = today_date.toordinal() - birth_date.toordinal()
     age = age - age / 366
@@ -254,21 +243,10 @@ def get_age_by_bdate(birth_date_str):
     length = len(birth_date_str)
     if length < 8:
         return -1
-    birth_year = int(birth_date_str[length - 4]) * 1000 + int(birth_date_str[length - 3]) * 100 + int(
-        birth_date_str[length - 2]) * 10 + int(birth_date_str[length - 1])
-    birth_day = int(birth_date_str[0])
-    if birth_date_str[1] != '.':  # В дне рождения два символа.
-        birth_day *= 10
-        birth_day += int(birth_date_str[1])
-        if birth_date_str[4] != '.':  # В месяце рождения два символа
-            birth_month = int(birth_date_str[3]) * 10 + int(birth_date_str[4])
-        else:
-            birth_month = int(birth_date_str[3])
-    else:  # В дне рождения один символ
-        if birth_date_str[3] != '.':  # В месяце рождения два символа
-            birth_month = int(birth_date_str[2]) * 10 + int(birth_date_str[3])
-        else:  # В месяце рождения один символ
-            birth_month = int(birth_date_str[2])
+    birth_date_str_list = birth_date_str.split('.')
+    birth_year = int(birth_date_str_list[3])
+    birth_month = int(birth_date_str_list[1])
+    birth_day = int(birth_date_str_list[0])
     birth_date = datetime.date(birth_year, birth_month, birth_day)
     age = today_date.toordinal() - birth_date.toordinal()
     age = age - age / 366
