@@ -9,7 +9,7 @@ At first, make sure you have this libraries: <br>
  `matplotlib` <br>
  `pyTelegramBotAPI`
  <br>
- And, if they are not, install them with this command:
+ And, if you are not, install them with this command:
 ```shell script
 pip3 install requests numpy pandas sklearn matplotlib pyTelegramBotAPI
 ```
