@@ -182,7 +182,7 @@ def get_friends_ages(target):
     :return friend's ages
     """
     friends_bdate = get_friends_bdate(target)
-    ages = [ ]
+    ages = []
     age = -1
     if friends_bdate == "PC":
         return "PC"
@@ -198,7 +198,6 @@ def get_friends_ages(target):
 
 def get_friends_bdate(target):
     """
-
     :param target: friends' birth dates
     :return:
     """
@@ -231,9 +230,9 @@ def get_age_by_bdate(birth_date_str):
     if length < 8:
         return -1
     birth_date_str_list = birth_date_str.split('.')
-    birth_year = int(birth_date_str_list[3])
-    birth_month = int(birth_date_str_list[1])
     birth_day = int(birth_date_str_list[0])
+    birth_month = int(birth_date_str_list[1])
+    birth_year = int(birth_date_str_list[2])
     birth_date = datetime.date(birth_year, birth_month, birth_day)
     age = today_date.toordinal() - birth_date.toordinal()
     age = age - age / 366

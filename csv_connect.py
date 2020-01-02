@@ -83,7 +83,7 @@ def fill_friends_age(input_csv, output_csv):
 
 
 def people_who_specified_age(data):
-    count  = 0
+    count = 0
     for i in range(0, data.__len__()):
         if data["VK Age"][i] != "IS NOT SPECIFIED":
             count += 1
@@ -100,29 +100,18 @@ def people_whose_vk_age_is_equal_to_real_age(data):
             pass
     return count
 
+
 def fill_error_list(data):
-    columns = ['Mean', 'HMean', 'Median', 'Mode']
     error_list_dict = {
         'Mean': [],
         'HMean': [],
         'Median': [],
         'Mode': []
     }
-    # print(type(columns))
-    # print(columns)
-    # print(error_list_data)
     print(data)
     for i in range(0, data.__len__()):
         real_age = int(data["Real Age"][i])
-        # print(real_age)
-        # print()
-        # print()
-        # print()
-        # print()
-        # print(f'{data["Mean"][i]} \t {data["Harmonic Mean"][i]} \t {data["Mode"][i]} \t {data["Median"][i]}')
         if data["Mean"][i] != "PROFILE CLOSED":
-            # print(f'{data["Mean"][i]} \t {data["Harmonic Mean"][i]} \t {data["Mode"][i]} \t {data["Median"][i]}')
-
             mean_error = abs(int(data["Mean"][i]) - real_age)
             hmean_error = abs(int(data["Harmonic Mean"][i]) - real_age)
             median_error = abs(int(data["Median"][i]) - real_age)
@@ -134,7 +123,6 @@ def fill_error_list(data):
         else:
             pass
     error_list_data = pd.DataFrame(data=error_list_dict)
-    # print(error_list_data)
     return error_list_data
 
 
@@ -144,9 +132,11 @@ def analyze(input_file):
     people_with_true_age = people_whose_vk_age_is_equal_to_real_age(data)
     open_profile_count = people_with_open_profile(data)
     print("+---------------------------------------------------------------------------------------+")
-    print(f"|Number of people, who specified their age: {specified_age} ({round( (specified_age / data.__len__() * 100), 2 )} %)\t\t\t\t\t|")
-    print(f"|Number of people, whose vk age is equal to real age: {people_with_true_age} ({round( (people_with_true_age / data.__len__() * 100), 2)} %)\t\t\t|")
-    print(f"|Number of people, whose vk profile is open: {open_profile_count} ({round( open_profile_count / data.__len__() * 100 , 2)} %)\t\t\t\t|")
+    print(f"|Number of people, who specified their age: "
+          f"{specified_age} ({round((specified_age / data.__len__() * 100), 2)} %)\t\t\t\t\t|")
+    print(f"|Number of people, whose vk age is equal to real age: "
+          f"{people_with_true_age} ({round((people_with_true_age / data.__len__() * 100), 2)} %)\t\t\t|")
+    print(f"|Number of people, whose vk profile is open: "
+          f"{open_profile_count} ({round(open_profile_count / data.__len__() * 100, 2)} %)\t\t\t\t|")
     print("+---------------------------------------------------------------------------------------+")
     print(data)
-    # print(data)

@@ -13,7 +13,8 @@ if __name__ == "__main__":
         name = age_analyzer.get_name(target=target)
         try:
             predicted = neural_network.query(self=neural_network, ages=ages)
-            answer = f"Neural network thinks that {name['first_name']} {name['last_name']} ({target}) age is {predicted}"
+            answer = f"Neural network thinks that {name['first_name']} {name['last_name']}" \
+                     f"({target}) age is {predicted}"
         except:
             answer = "Profile closed"
         print(answer)
