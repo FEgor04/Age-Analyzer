@@ -1,14 +1,15 @@
 
-####Install
-At first, make sure you have this libraries: <br>
- `requests` <br>
- `numpy` <br>
- `pandas` <br>
- `sklearn` <br>
- `matplotlib` <br>
- `pyTelegramBotAPI`
- <br>
- And, if they are not, install them with this command:
+##Install
+
+At first, make sure you have this libraries:
+  1. requests 
+  2. numpy
+  3. pandas
+  4. sklearn
+  5. matplotlib
+  6. pyTelegramBotAPI
+  
+And, if they are not, install them with this command:
 ```shell script
 pip3 install requests numpy pandas sklearn matplotlib pyTelegramBotAPI
 ```
@@ -27,7 +28,8 @@ tg_api = 'your_telegram_token'
                     # If you need logging:
 log_needed = True
 ```
-#### How to analyze someone's age:
+## How to analyze someone's age:
+
 Set ``target`` variable equal to target's id or short link <br>
 Then launch `__main__.py` file with this:
 ```shell script
@@ -36,7 +38,8 @@ python __main__.py
 Script will ask you to input target's ID, and then it will print his age.
 <hr>
 
-#### NEED HELP
+## NEED HELP
+
 I really need some help.
 On my VPS located in Netherlands `age_analyzer.get_friends_ages("fegor2004")` gives this:
 ```
