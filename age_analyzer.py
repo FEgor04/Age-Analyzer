@@ -171,20 +171,7 @@ def get_age(target):
     :return target's age by his VK id
     """
     birth_date_str = get_bdate(target)
-    today_date = datetime.datetime.today()
-    if birth_date_str == -1:
-        return -1
-    length = len(birth_date_str)
-    if length < 8:
-        return -1
-    birth_date_str_list = birth_date_str.split('.')
-    birth_year = int(birth_date_str_list[3])
-    birth_month = int(birth_date_str_list[1])
-    birth_day = int(birth_date_str_list[0])
-    birth_date = datetime.date(birth_year, birth_month, birth_day)
-    age = today_date.toordinal() - birth_date.toordinal()
-    age = age - age / 366
-    age = math.floor(age / 365)
+    age = get_age_by_bdate(birth_date_str)
     return age
 
 
@@ -195,7 +182,7 @@ def get_friends_ages(target):
     :return friend's ages
     """
     friends_bdate = get_friends_bdate(target)
-    ages = []
+    ages = [ ]
     age = -1
     if friends_bdate == "PC":
         return "PC"
