@@ -91,7 +91,6 @@ def answer(message):
         if target_age == -1:
             target_age = "не указан"
         friends_ages = age_analyzer.get_friends_ages(to_build)
-        print(f"ID: {to_build}. Ages: {friends_ages}")
         predicted = neural_network.query(friends_ages)
 
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \

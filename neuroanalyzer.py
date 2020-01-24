@@ -4,6 +4,7 @@ import statistics as st
 
 import numpy as np
 import pandas as pd
+import age_analyzer as analyzer
 from sklearn import linear_model
 
 import settings
@@ -81,7 +82,7 @@ class NeuralNetwork:
         self.y_train_dict = {
             "Real Age": real_age_arr_train
         }
-        log("DATA PREPARED", f"Data prepared successfully. Data length: {len(self.x_train_df)}",
+        log("prepare_data_from_df", f"Data prepared successfully. Data length: {len(self.x_train_df)}",
             "log/neuroanalyzer.log")
 
     def train(self, df):
@@ -94,7 +95,47 @@ class NeuralNetwork:
         self.x_train_df = pd.DataFrame(self.x_train_dict)
         self.y_train_df = pd.DataFrame(self.y_train_dict)
         self.reg.fit(self.x_train_df, self.y_train_df)
-        log("MODEL TRAINED", f"Model trained successfully. Data length: {len(self.x_train_df)}",
+        log("train", f"Model trained successfully. Data length: {len(self.x_train_df)}",
+            "log/neuroanalyzer.log")
+        self.save_model(settings.neuronet_file)
+
+    def train_with_raw_data(self, raw_df):
+        log("train_with_raw_data", f"train_with_raw_data() started.", "log/neuroanalyzer.log")
+        real_age_arr = []
+        mean_arr = []
+        hmean_arr = []
+        mode_arr = []
+        median_arr = []
+        std_arr = []
+        for i in range(raw_df.__len__()):
+            id = raw_df['ID'][i]
+            ages = (analyzer.get_friends_ages(id))
+            if ages != "PC":
+                ages = np.array(ages)
+                mean_arr.append(round(st.mean(ages)))
+                hmean_arr.append(round(st.harmonic_mean(ages)))
+                mode_arr.append(find_average_mode(ages))
+                median_arr.append(round(st.median(ages)))
+                std_arr.append(round(ages.std()))
+            else:
+                pass
+        log("train_with_raw_data", f"Data collected. Started training", "log/neuroanalyzer.log")
+        x_train_df = pd.DataFrame(
+            {
+                "Mean": mean_arr,
+                "Mode": mode_arr,
+                "Median": median_arr,
+                "HMean": hmean_arr,
+                "std": std_arr
+            }
+        )
+        y_train_df = pd.DataFrame(
+            {
+                "Real Age": real_age_arr
+            }
+        )
+        self.reg.fit(x_train_df, y_train_df)
+        log("train_with_raw_data", f"Model trained successfully. Data length: {len(x_train_df)}. Saving data",
             "log/neuroanalyzer.log")
         self.save_model(settings.neuronet_file)
 
@@ -105,7 +146,7 @@ class NeuralNetwork:
         :return: saves model in filename
         """
         pickle.dump(self.reg, open(filename, 'wb'))
-        log("MODEL SAVED", "Model saved successfully", "log/neuroanalyzer.log")
+        log("save_model", "Model saved successfully", "log/neuroanalyzer.log")
 
     def open_model(self, filename):
         """
@@ -114,7 +155,7 @@ class NeuralNetwork:
         :return: opens model from filename
         """
         self.reg = pickle.load(open(filename, 'rb'))
-        log("MODEL LOADED", "Model loaded successfully", "log/neuroanalyzer.log")
+        log("open_model", "Model loaded successfully", "log/neuroanalyzer.log")
 
     def query(self, ages):
         """
@@ -129,10 +170,9 @@ class NeuralNetwork:
         std = round(np.array(ages).std(), 0)
         predicted = (self.reg.predict([[mean, hmean, mode, median, std]]))
         predicted = round(predicted[0][0], 2)
-        # print(f"\n\n\npredicted: {predicted} \n\n\n")
-        log("QUERY",
+        log("query",
             f"Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}."
             f" Result: {predicted}.",
             "log/neuroanalyzer.log")
-        self.save_model(self=self, filename=settings.neural_network_file)
+        self.save_model(filename=settings.neural_network_file)
         return predicted
