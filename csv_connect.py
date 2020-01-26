@@ -1,5 +1,4 @@
 import statistics as st
-
 import numpy as np
 import pandas as pd
 
@@ -9,7 +8,7 @@ import age_analyzer as analyzer
 def people_with_open_profile(data):
     count = 0
     for i in range(0, data.__len__()):
-        if data["Mean"][i] == "PROFILE CLOSED":
+        if data["Mean"][i] == -1:
             pass
         else:
             count -= -1
@@ -32,7 +31,7 @@ def fill_vk_age(input_csv, output_csv):
         if analyzer.get_age(target) != -1:
             data["VK Age"][i] = analyzer.get_age(target)
         else:
-            data["VK Age"][i] = "IS NOT SPECIFIED"
+            data["VK Age"][i] = "-1"
     df = pd.DataFrame(data)
     df.to_csv(output_csv, index=False)
 
@@ -47,34 +46,33 @@ def fill_friends_age(input_csv, output_csv):
             ages = analyzer.get_friends_ages(data["ID"][i])
             print(f"ID: {data['ID'][i]}. Ages: {ages} ")
             try:
-                mean = int(round(st.mean(ages), 0))
-                data["Mean"][i] = mean
+                data["Mean"][i] = round(st.mean(ages), 2)
             except:
-                data["Mean"][i] = "PROFILE CLOSED"
+                data["Mean"][i] = -1
 
             try:
-                data["Mode"][i] = int(find_average_mode(ages))
+                data["Mode"][i] = round(find_average_mode(ages), 2)
             except TypeError:
-                data["Mode"][i] = "PROFILE CLOSED"
+                data["Mode"][i] = -1
 
             try:
-                data["Harmonic Mean"][i] = int(round(st.harmonic_mean(ages), 0))
+                data["Harmonic Mean"][i] = round(st.harmonic_mean(ages), 2)
             except:
-                data["Harmonic Mean"][i] = "PROFILE CLOSED"
+                data["Harmonic Mean"][i] = -1
 
             try:
-                data["Median"][i] = int(round(st.median(ages), 0))
+                data["Median"][i] = round(st.median(ages), 2)
             except:
-                data["Median"][i] = "PROFILE CLOSED"
+                data["Median"][i] = -1
 
             try:
                 if ages == "PC":
-                    data["std"][i] = "PROFILE CLOSED"
+                    data["std"][i] = -1
                 else:
                     ages_np = np.array(ages)
-                    data["std"][i] = int(round(np.std(ages_np), 0))
+                    data["std"][i] = round(np.std(ages_np), 2)
             except:
-                data["std"][i] = "PROFILE CLOSED"
+                data["std"][i] = -1
 
     df = pd.DataFrame(data)
     print(df)
@@ -82,10 +80,14 @@ def fill_friends_age(input_csv, output_csv):
     df.to_csv(output_csv, index=False)
 
 
+
+
+
+
 def people_who_specified_age(data):
     count = 0
     for i in range(0, data.__len__()):
-        if data["VK Age"][i] != "IS NOT SPECIFIED":
+        if data["VK Age"][i] != "-1":
             count += 1
     return count
 
@@ -111,7 +113,7 @@ def fill_error_list(data):
     print(data)
     for i in range(0, data.__len__()):
         real_age = int(data["Real Age"][i])
-        if data["Mean"][i] != "PROFILE CLOSED":
+        if data["Mean"][i] != -1:
             mean_error = abs(int(data["Mean"][i]) - real_age)
             hmean_error = abs(int(data["Harmonic Mean"][i]) - real_age)
             median_error = abs(int(data["Median"][i]) - real_age)

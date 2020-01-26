@@ -99,45 +99,38 @@ class NeuralNetwork:
             "log/neuroanalyzer.log")
         self.save_model(settings.neuronet_file)
 
-    def train_with_raw_data(self, raw_df):
+    def train_with_raw_data(self, df_raw):
         log("train_with_raw_data", f"train_with_raw_data() started.", "log/neuroanalyzer.log")
-        real_age_arr = []
-        mean_arr = []
-        hmean_arr = []
-        mode_arr = []
-        median_arr = []
-        std_arr = []
-        for i in range(raw_df.__len__()):
-            id = raw_df['ID'][i]
-            ages = (analyzer.get_friends_ages(id))
-            if ages != "PC":
-                ages = np.array(ages)
-                mean_arr.append(round(st.mean(ages)))
-                hmean_arr.append(round(st.harmonic_mean(ages)))
-                mode_arr.append(find_average_mode(ages))
-                median_arr.append(round(st.median(ages)))
-                std_arr.append(round(ages.std()))
-            else:
-                pass
+        df_raw.fillna(-1.0, inplace=True)
+        real_age_list = []
+        mean_list = []
+        hmean_list = []
+        median_list = []
+        mode_list = []
+        std_list = []
+        for i in range(df_raw.__len__()):
+            if df_raw['Mean'][i] != -1:
+                real_age_list.append(df_raw['Real Age'][i])
+                mean_list.append(df_raw['Mean'][i])
+                hmean_list.append(df_raw['Harmonic Mean'][i])
+                mode_list.append(df_raw['Mode'][i])
+                median_list.append(df_raw['Median'][i])
+                std_list.append(df_raw['std'][i])
         log("train_with_raw_data", f"Data collected. Started training", "log/neuroanalyzer.log")
-        x_train_df = pd.DataFrame(
-            {
-                "Mean": mean_arr,
-                "Mode": mode_arr,
-                "Median": median_arr,
-                "HMean": hmean_arr,
-                "std": std_arr
-            }
-        )
-        y_train_df = pd.DataFrame(
-            {
-                "Real Age": real_age_arr
-            }
-        )
+        y_train_df = pd.DataFrame({
+            "Real Age": real_age_list
+        })
+        x_train_df = pd.DataFrame({
+            'Mean': mean_list,
+            'Harmonic Mean': hmean_list,
+            'Mode': mode_list,
+            'Median': median_list,
+            'std': std_list
+        })
         self.reg.fit(x_train_df, y_train_df)
         log("train_with_raw_data", f"Model trained successfully. Data length: {len(x_train_df)}. Saving data",
             "log/neuroanalyzer.log")
-        self.save_model(settings.neuronet_file)
+        self.save_model(settings.neural_network_file)
 
     def save_model(self, filename):
         """
@@ -163,12 +156,12 @@ class NeuralNetwork:
         :param ages: list with ages
         :return: estimated age by list with ages
         """
-        mean = round(st.mean(ages), 0)
-        median = round(st.median(ages), 0)
-        hmean = round(st.harmonic_mean(ages), 0)
-        mode = round(find_average_mode(ages), 0)
-        std = round(np.array(ages).std(), 0)
-        predicted = (self.reg.predict([[mean, hmean, mode, median, std]]))
+        mean = round(st.mean(ages), 2)
+        median = round(st.median(ages), 2)
+        hmean = round(st.harmonic_mean(ages), 2)
+        mode = round(find_average_mode(ages), 2)
+        std = round(np.array(ages).std(), 2)
+        predicted = self.reg.predict([[mean, hmean, mode, median, std]])
         predicted = round(predicted[0][0], 2)
         log("query",
             f"Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}."
