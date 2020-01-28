@@ -1,9 +1,8 @@
 import datetime
 import statistics as st
-
+import numpy as np
 import matplotlib.pyplot as plt
 import telebot
-
 import age_analyzer
 import neuroanalyzer
 import settings
@@ -11,6 +10,13 @@ from neuroanalyzer import NeuralNetwork
 
 bot = telebot.TeleBot(settings.tg_api)
 neural_network: NeuralNetwork = neuroanalyzer.NeuralNetwork()
+
+
+def counts_by_arr(arr):
+    answ_arr = list([0] * (arr.max() + 1))
+    for i in arr:
+        answ_arr[i] += 1
+    return np.array(answ_arr)
 
 
 def launch() -> object:
@@ -105,26 +111,30 @@ def answer(message):
 def build_histogram(message):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     to_build = (message.text.split(' '))[1]
-    log("REQUEST", f"{by} wants to build graph {message.text}", "log/telegram.log")
+    log("build_graph request", f"{by} wants to build histogram {message.text}", "log/telegram.log")
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":
-        log("RESPONSE", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
+        log("build_graph response", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
         bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
     else:
         bot.send_message(message.chat.id, f"Мы начали анализировать {to_build}")
-        log("GRAPH", f"Started analyze {to_build} to build graph. Requested by {by}", "log/telegram.log")
+        log("build_graph", f"Started analyze {to_build} to build histogram. Requested by {by}", "log/telegram.log")
         target_name = age_analyzer.get_name(to_build)
         # target_age = age_analyzer.get_age(to_build)
         ages = age_analyzer.get_friends_ages(target=to_build)
-
-        hist = plt.hist(ages)
-        plt.grid(1)
-        plt.xlim(0, 60)
-        plt.title(f"{target_name['first_name']} {target_name['last_name']}")
-        plt.ylabel("Count")
-        plt.xlabel("Age")
+        y = counts_by_arr(ages)
+        x = range(len(y))
+        plt.figure(figsize=(15, 5), dpi=80)
+        plt.bar(x=x, height=y)
+        plt.xlim(ages.min() - 5, ages.max() + 5)
+        plt.ylim(0, y.max() + 5)
+        plt.xticks(np.arange(ages.min() - 5, ages.max() + 5, 1))
+        plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
+        plt.ylabel("Count", fontsize=16)
+        plt.xlabel("Age", fontsize=16)
         plt.savefig(f"graph/{to_build}.png")
         photo = open(f"graph/{to_build}.png", 'rb')
+        log("build_graph response", f"Histogram built. Sending it back", "log/telegram.log")
         bot.send_message(message.chat.id,
                          f"Мы построили гистограмму возрастов друзей"
                          f" пользователя {target_name['first_name']} {target_name['last_name']}.")
@@ -132,4 +142,3 @@ def build_histogram(message):
         bot.send_photo(message.chat.id, photo)
         plt.close()
         photo.close()
-

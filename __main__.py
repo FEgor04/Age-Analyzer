@@ -43,5 +43,3 @@ if __name__ == "__main__":
         pass
     else:
         telegram_bot.launch()
-    # csv_connect.fill_vk_age('age_research.csv', 'age_research1.csv')
-    # csv_connect.fill_friends_age('age_research1.csv', 'age_research1.csv')
