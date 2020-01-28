@@ -13,7 +13,7 @@ neural_network: NeuralNetwork = neuroanalyzer.NeuralNetwork()
 
 
 def counts_by_arr(arr):
-    answ_arr = list([0] * (arr.max() + 1))
+    answ_arr = list([0] * (max(arr) + 1))
     for i in arr:
         answ_arr[i] += 1
     return np.array(answ_arr)
@@ -126,9 +126,9 @@ def build_histogram(message):
         x = range(len(y))
         plt.figure(figsize=(15, 5), dpi=80)
         plt.bar(x=x, height=y)
-        plt.xlim(ages.min() - 5, ages.max() + 5)
-        plt.ylim(0, y.max() + 5)
-        plt.xticks(np.arange(ages.min() - 5, ages.max() + 5, 1))
+        plt.xlim(min(ages) - 5, max(ages) + 5)
+        plt.ylim(0, max(y) + 5)
+        plt.xticks(np.arange(min(ages) - 5, max(ages) + 5, 1))
         plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
         plt.ylabel("Count", fontsize=16)
         plt.xlabel("Age", fontsize=16)
