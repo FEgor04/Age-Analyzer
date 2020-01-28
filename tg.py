@@ -129,7 +129,7 @@ def build_histogram(message):
         plt.xlim(min(ages) - 5, max(ages) + 5)
         plt.ylim(0, max(y) + 5)
         plt.yticks(np.arange(0, max(y) + 5, 5))
-        plt.xticks(np.arange(min(ages), max(ages), 5)
+        plt.xticks(np.arange(min(ages), max(ages), 5))
         plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
         plt.ylabel("Count", fontsize=16)
         plt.xlabel("Age", fontsize=16)
