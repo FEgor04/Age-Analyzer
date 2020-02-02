@@ -1,1 +1,6 @@
-requests numpy pandas sklearn matplotlib pyTelegramBotAPI
+requests
+numpy
+pandas
+sklearn
+matplotlib
+pyTelegramBotAPI

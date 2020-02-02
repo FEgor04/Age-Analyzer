@@ -1,3 +1,1 @@
 language: python
-before_install:
-  - sudo pip install requests numpy pandas sklearn matplotlib pyTelegramBotAPI
