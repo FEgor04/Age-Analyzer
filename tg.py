@@ -79,11 +79,13 @@ def find_average_mode(arr):
 
 @bot.message_handler(commands=['analyze'])
 def answer(message):
-    by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
+    by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})".encode("cp1252")
     try:
         to_build = (message.text.split(' '))[1]
     except:
-        to_build = "ddd"
+        log("RESPONSE", f"Wrong format. Requested by {by}", "log/telegram.log")
+        bot.send_message(message.chat.id, "Введите по формату\n"
+                                          "/analyze {id}")
     log("REQUEST", f"{by} wants to analyze {to_build}", "log/telegram.log")
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":
@@ -98,10 +100,10 @@ def answer(message):
             target_age = "не указан"
         friends_ages = age_analyzer.get_friends_ages(to_build)
         predicted = neural_network.query(friends_ages)
-
+        mode = find_max_mode(friends_ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \
-                   f"Однако, мы полагаем, что настоящий возраст - {predicted} "
+                   f"Однако, мы полагаем, что настоящий возраст: {min(predicted,mode)}-{max(predicted,mode)} "
 
         bot.send_message(message.chat.id, response)
         log("RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
@@ -110,7 +112,12 @@ def answer(message):
 @bot.message_handler(commands=["histogram"])
 def build_histogram(message):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
-    to_build = (message.text.split(' '))[1]
+    try:
+        to_build = (message.text.split(' '))[1]
+    except:
+        log("RESPONSE", f"Wrong format. Requested by {by}", "log/telegram.log")
+        bot.send_message(message.chat.id, "Введите по формату\n"
+                                          "/analyze {id}")
     log("build_graph request", f"{by} wants to build histogram {message.text}", "log/telegram.log")
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":

@@ -1,10 +1,8 @@
 import datetime
 import pickle
 import statistics as st
-
 import numpy as np
 import pandas as pd
-import age_analyzer as analyzer
 from sklearn import linear_model
 
 import settings
