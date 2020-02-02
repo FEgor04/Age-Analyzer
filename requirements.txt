@@ -1,0 +1,1 @@
+requests numpy pandas sklearn matplotlib pyTelegramBotAPI
