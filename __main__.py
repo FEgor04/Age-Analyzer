@@ -27,10 +27,12 @@ if __name__ == "__main__":
         print("Input target's ID:", end=" ")
         target = input()
         neural_network = neuroanalyzer.NeuralNetwork()
-        df_raw = pd.read_csv('age_research1.csv')   # File should be formatted like '
+        # neural_network.train_with_raw_data(df_with_data)
+        # File should be formatted like:
         # ID,Real Age,VK Age,Mean,Harmonic Mean,Mode,Median,std'
+        # OR:
         # Bot loads neural network from file
-        neural_network.train_with_raw_data(df_raw=df_raw)
+        neural_network.open_model(settings.neural_network_file)
         ages = age_analyzer.get_friends_ages(target=target)
         name = age_analyzer.get_name(target=target)
         try:
@@ -39,7 +41,6 @@ if __name__ == "__main__":
                      f"({target}) age is {predicted}"
         except:
             answer = "Profile closed"
-        print(answer)
         pass
     else:
         telegram_bot.launch()

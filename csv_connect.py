@@ -5,17 +5,22 @@ import pandas as pd
 import age_analyzer as analyzer
 
 
-def people_with_open_profile(data):
-    count = 0
-    for i in range(0, data.__len__()):
-        if data["Mean"][i] == -1:
-            pass
-        else:
-            count -= -1
+def people_with_open_profile(data: pd.DataFrame):
+    """
+
+    :param data: pandas.DataFrame with needed cells
+    :return: count of people whose profile is open
+    """
+    count = data[data["Mean"] != -1]["ID"].count()
     return count
 
 
 def find_average_mode(arr):
+    """"
+
+    :param arr: list, mode of each you want to get
+    :return mode. If there are many modes, it will return average of them
+    """
     list_table = st._counts(arr)
     len_table = len(list_table)
     new_list = []
@@ -25,6 +30,11 @@ def find_average_mode(arr):
 
 
 def fill_vk_age(input_csv, output_csv):
+    """
+    Fills VK Age in output_csv file
+    :param input_csv: where to get data from
+    :param output_csv: where to put data
+    """
     data = pd.read_csv(input_csv)
     for i in range(0, data.__len__()):
         target = data['ID'][i]
@@ -37,6 +47,13 @@ def fill_vk_age(input_csv, output_csv):
 
 
 def fill_friends_age(input_csv, output_csv):
+    """
+
+    This function fills friends ages' Mean, Median, etc.
+
+    :param input_csv: where to get data
+    :param output_csv: where to put data
+    """
     data = pd.read_csv(input_csv)
     for i in range(0, data.__len__()):
         if analyzer.is_profile_closed(data["ID"][i]):
@@ -80,30 +97,32 @@ def fill_friends_age(input_csv, output_csv):
     df.to_csv(output_csv, index=False)
 
 
+def people_who_specified_age(data: pd.DataFrame):
+    """
 
-
-
-
-def people_who_specified_age(data):
-    count = 0
-    for i in range(0, data.__len__()):
-        if data["VK Age"][i] != "-1":
-            count += 1
+    :param data: pandas.DataFrame with needed cells
+    :return: Count of people who specify their age
+    """
+    count = data[data["VK Age"] != -1]["ID"].count()
     return count
 
 
-def people_whose_vk_age_is_equal_to_real_age(data):
-    count = 0
-    for i in range(0, data.__len__()):
-        try:
-            if int(data["VK Age"][i]) == int(data["Real Age"][i]):
-                count += 1
-        except:
-            pass
+def people_whose_vk_age_is_equal_to_real_age(data: pd.DataFrame):
+    """
+
+    :param data: pandas.DataFrame with needed cells
+    :return: Count of people whose VK age is equal to Real Age
+    """
+    count = data[data["VK Age"] == data["Real Age"]]["ID"].count()
     return count
 
 
-def fill_error_list(data):
+def fill_error_list(data: pd.DataFrame) -> pd.DataFrame:
+    """
+
+    :param data: pandas.DataFrame with needed cells
+    :return: pd.DataFrame with error list filled with columns - Mean, HMean, Median, Mode
+    """
     error_list_dict = {
         'Mean': [],
         'HMean': [],
@@ -129,6 +148,10 @@ def fill_error_list(data):
 
 
 def analyze(input_file):
+    """
+    This function is doing everything that is needed
+    :param input_file: path to input_file
+    """
     data = pd.read_csv(input_file)
     specified_age = people_who_specified_age(data)
     people_with_true_age = people_whose_vk_age_is_equal_to_real_age(data)
