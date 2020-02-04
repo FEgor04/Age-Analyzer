@@ -2,10 +2,7 @@ import age_analyzer
 import neuroanalyzer
 import settings
 import tg as telegram_bot
-import csv_connect
 import statistics as st
-import numpy as np
-import pandas as pd
 
 
 def find_average_mode(arr):
