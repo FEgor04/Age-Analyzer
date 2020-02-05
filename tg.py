@@ -74,21 +74,24 @@ def find_average_mode(arr):
 
 @bot.message_handler(commands=['analyze'])
 def answer(message):
-    by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})".encode("cp1252")
+    by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})".encode("ascii", errors="xmlcharrefreplace")
     try:
         to_build = (message.text.split(' '))[1]
     except:
-        log("RESPONSE", f"Wrong format. Requested by {by}", "log/telegram.log")
+        log("ANALYZE_RESPONSE", f"Wrong format. Requested by {by}", "log/telegram.log")
         bot.send_message(message.chat.id, "Введите по формату\n"
                                           "/analyze {id}")
-    log("REQUEST", f"{by} wants to analyze {to_build}", "log/telegram.log")
+    try:
+        log("ANALYZE_REQUEST", f"{by} wants to analyze {to_build}".encode("ascii", errors='xmlcharrefreplace'), "log/telegram.log")
+    except:
+        log("ANALYZE_ERROR", "Couldn't log who wants to analyze")
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":
-        log("RESPONSE", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
+        log("ANALYZE_RESPONSE", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
         bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
     else:
         bot.send_message(message.chat.id, f"Мы начали анализировать {to_build}")
-        log("ANALYZING", f"Started analyze {to_build}. Requested by {by}", "log/telegram.log")
+        log("ANALYZE_ANALYZING", f"Started analyze {to_build}. Requested by {by}", "log/telegram.log")
         target_name = age_analyzer.get_name(to_build)
         target_age = age_analyzer.get_age(to_build)
         if target_age == -1:
@@ -102,7 +105,7 @@ def answer(message):
                    f"Мода: {mode}"
 
         bot.send_message(message.chat.id, response)
-        log("RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
+        log("ANALYZE_RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
 
 
 @bot.message_handler(commands=["histogram"])
