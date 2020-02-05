@@ -1,6 +1,7 @@
 import datetime
 import statistics as st
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import telebot
 import age_analyzer
@@ -34,7 +35,7 @@ def launch():
     try:
         neural_network.open_model(settings.neural_network_file)
     except:
-        neural_network.train('csv/age_research_filled.csv')
+        neural_network.train_with_raw_data(pd.read_csv(settings.project_folder + '/' + settings.csv_file))
     bot.polling()
 
 
@@ -93,12 +94,12 @@ def answer(message):
         if target_age == -1:
             target_age = "не указан"
         friends_ages = age_analyzer.get_friends_ages(to_build)
-        predicted = neural_network.query(friends_ages)
+        predicted = (neural_network.query(friends_ages))
         mode = find_max_mode(friends_ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \
-                   f"Однако, мы полагаем, что настоящий возраст: " \
-                   f"{min(predicted, mode)}-{max(predicted, mode)} "
+                   f"Однако, мы полагаем, что настоящий возраст: {predicted} \n" \
+                   f"Мода: {mode}"
 
         bot.send_message(message.chat.id, response)
         log("RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")

@@ -2,7 +2,7 @@ import settings
 import datetime
 
 
-def log(event: str, text: str, file: str, folder=settings.log_folder):
+def log(event: str, text: str, file: str, folder=settings.project_folder):
     """
 
     :param event: what happened

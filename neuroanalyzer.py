@@ -29,7 +29,7 @@ class NeuralNetwork:
         log("INIT", f"Model inited.", "log/neuroanalyzer.log")
         pass
 
-    def train_with_raw_data(self, df_raw):
+    def train_with_raw_data(self, df_raw: pd.DataFrame):
         log("train_with_raw_data", f"train_with_raw_data() started.", "log/neuroanalyzer.log")
         df_raw.fillna(-1.0, inplace=True)
         real_age_list = []
