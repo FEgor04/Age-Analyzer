@@ -6,6 +6,7 @@ import telebot
 import age_analyzer
 import neuroanalyzer
 import settings
+from log import log
 from neuroanalyzer import NeuralNetwork
 
 bot = telebot.TeleBot(settings.tg_api)
@@ -35,25 +36,6 @@ def launch():
     except:
         neural_network.train('csv/age_research_filled.csv')
     bot.polling()
-
-
-def log(event: str, text: str, file: str):
-    """
-
-    This function makes log
-
-    :param event: what happened
-    :param text: description
-    :param file: where to log
-    :return
-    """
-    read = open(file, 'r')
-    file_text = read.read()
-    read.close()
-    now = datetime.datetime.now()
-    log_text = f"{now}::{event}::{text}"
-    f = open(file, 'w')
-    f.write(file_text + log_text + '\n')
 
 
 def find_max_mode(list1):

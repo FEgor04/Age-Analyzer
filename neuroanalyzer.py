@@ -4,6 +4,7 @@ import statistics as st
 import numpy as np
 import pandas as pd
 from sklearn import linear_model
+from log import log
 
 import settings
 
@@ -20,26 +21,6 @@ def find_average_mode(arr):
     for i in range(len_table):
         new_list.append(list_table[i][0])
     return int(st.mean(new_list))
-
-
-def log(event, text, file):
-    """
-
-    :param event: what happened
-    :param text: description
-    :param file: where to log
-    :return Makes log formatted like this: TIME::EVENT::TEXT. It will put it in file
-    """
-    if settings.log_needed:
-        read = open(file, 'r')
-        file_text = read.read()
-        read.close()
-        now = datetime.datetime.now()
-        log_text = f"{now}::{event}::{text}"
-        f = open(file, 'w')
-        f.write(file_text + log_text + '\n')
-    else:
-        pass
 
 
 class NeuralNetwork:
