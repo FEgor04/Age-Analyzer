@@ -1,13 +1,13 @@
 import datetime
 import statistics as st
 import numpy as np
+import logging
 import pandas as pd
 import matplotlib.pyplot as plt
 import telebot
 import age_analyzer
 import neuroanalyzer
 import settings
-from log import log
 from neuroanalyzer import NeuralNetwork
 
 bot = telebot.TeleBot(settings.tg_api)
@@ -36,11 +36,16 @@ def launch():
         neural_network.open_model(settings.neural_network_file)
     except:
         neural_network.train_with_raw_data(pd.read_csv(settings.project_folder + '/' + settings.csv_file))
+    logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                        level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.log')
+    logging.info("launch\t\tBot launched.")
     bot.polling()
 
 
 def find_max_mode(list1):
     """
+
+    This function finds maximal mode in list1
 
     :param list1: list, mode of each you want to get
     :return max_mode. If there are many modes, it will return maximal of them
@@ -61,6 +66,8 @@ def find_max_mode(list1):
 def find_average_mode(arr):
     """
 
+    This function finds average mode in arr
+
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
@@ -74,24 +81,27 @@ def find_average_mode(arr):
 
 @bot.message_handler(commands=['analyze'])
 def answer(message):
-    by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})".encode("ascii", errors="xmlcharrefreplace")
+    by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         to_build = (message.text.split(' '))[1]
     except:
-        log("ANALYZE_RESPONSE", f"Wrong format. Requested by {by}", "log/telegram.log")
+        try:
+            logging.info(f"analyze_response\t\tWrong format. Requested by {by}")
+        except:
+            logging.error(f"analyze_error")
         bot.send_message(message.chat.id, "Введите по формату\n"
                                           "/analyze {id}")
     try:
-        log("ANALYZE_REQUEST", f"{by} wants to analyze {to_build}".encode("ascii", errors='xmlcharrefreplace'), "log/telegram.log")
+        logging.info(f"analyze_request \t\t {by} wants to analyze {to_build}".encode("ascii", errors='xmlcharrefreplace'))
     except:
-        log("ANALYZE_ERROR", "Couldn't log who wants to analyze")
+        logging.error(f"analyze_error")
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":
-        log("ANALYZE_RESPONSE", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
+        logging.info(f"analyze_response\t\t{message.chat.id} - no profile. Requested by {by}")
         bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
     else:
         bot.send_message(message.chat.id, f"Мы начали анализировать {to_build}")
-        log("ANALYZE_ANALYZING", f"Started analyze {to_build}. Requested by {by}", "log/telegram.log")
+        logging.info(f"analyze_analyzing\t\tStarted analyze {to_build}. Requested by {by}.")
         target_name = age_analyzer.get_name(to_build)
         target_age = age_analyzer.get_age(to_build)
         if target_age == -1:
@@ -105,7 +115,7 @@ def answer(message):
                    f"Мода: {mode}"
 
         bot.send_message(message.chat.id, response)
-        log("ANALYZE_RESPONSE", f"Answered to {by}. Request: {message.chat.id}", "log/telegram.log")
+        logging.info(f"analyze_response\t\tAnswered to {by}. Request: {message.chat.id}")
 
 
 @bot.message_handler(commands=["histogram"])
@@ -114,20 +124,19 @@ def build_histogram(message):
     try:
         to_build = (message.text.split(' '))[1]
     except:
-        log("RESPONSE", f"Wrong format. Requested by {by}", "log/telegram.log")
+        logging.info(f"histogram_response\t\tWrong format. Requested by {by}")
         bot.send_message(message.chat.id, "Введите по формату\n"
                                           "/analyze {id}")
         return
-    log("build_graph request", f"{by} wants to build histogram {message.text}", "log/telegram.log")
+    logging.info(f"histogram_request\t\t{by} wants to build histogram {message.text}")
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":
-        log("build_graph response", f"{message.chat.id} - no profile. Requested by {by}", "log/telegram.log")
+        logging.info(f"histogram_response\t\t{message.chat.id} - no profile. Requested by {by}")
         bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
     else:
         bot.send_message(message.chat.id, f"Мы начали анализировать {to_build}")
-        log("build_graph", f"Started analyze {to_build} to build histogram. Requested by {by}", "log/telegram.log")
+        logging.info(f"histogram_start\t\tStarted analyze {to_build} to build histogram. Requested by {by}")
         target_name = age_analyzer.get_name(to_build)
-        # target_age = age_analyzer.get_age(to_build)
         ages = age_analyzer.get_friends_ages(target=to_build)
         y = counts_by_arr(ages)
         x = range(len(y))
@@ -142,7 +151,7 @@ def build_histogram(message):
         plt.xlabel("Age", fontsize=16)
         plt.savefig(f"{settings.project_folder}/graph/{to_build}.png")
         photo = open(f"{settings.project_folder}/graph/{to_build}.png", 'rb')
-        log("build_graph response", f"Histogram built. Sending it back", "log/telegram.log")
+        logging.info("histogram_response \t\tHistogram built. Sending it back.")
         bot.send_message(message.chat.id,
                          f"Мы построили гистограмму возрастов друзей"
                          f" пользователя {target_name['first_name']} {target_name['last_name']}.")
