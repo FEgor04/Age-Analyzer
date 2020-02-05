@@ -137,8 +137,8 @@ def build_histogram(message):
         plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
         plt.ylabel("Count", fontsize=16)
         plt.xlabel("Age", fontsize=16)
-        plt.savefig(f"graph/{to_build}.png")
-        photo = open(f"graph/{to_build}.png", 'rb')
+        plt.savefig(f"{settings.project_folder}/graph/{to_build}.png")
+        photo = open(f"{settings.project_folder}/graph/{to_build}.png", 'rb')
         log("build_graph response", f"Histogram built. Sending it back", "log/telegram.log")
         bot.send_message(message.chat.id,
                          f"Мы построили гистограмму возрастов друзей"
