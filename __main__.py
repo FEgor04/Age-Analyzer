@@ -38,6 +38,6 @@ if __name__ == "__main__":
                      f"({target}) age is {predicted}"
         except:
             answer = "Profile closed"
-        pass
+        print(answer)
     else:
         telegram_bot.launch()
