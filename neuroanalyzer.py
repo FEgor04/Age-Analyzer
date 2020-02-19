@@ -26,13 +26,13 @@ def find_average_mode(arr):
 class NeuralNetwork:
     def __init__(self):
         self.reg = linear_model.LinearRegression()
-        logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]\t\t %(levelname)-8s [%(asctime)s]  %(message)s',
-                            level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.log')
-        logging.info("INIT\t\tModel initiated.")
+        logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d],%(levelname)-8s [%(asctime)s],%(message)s',
+                            level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
+        logging.info("INIT,Model initiated.")
         pass
 
     def train_with_raw_data(self, df_raw: pd.DataFrame):
-        logging.info("train_with_raw_data\t\tStarted training.")
+        logging.info("train_with_raw_data,Started training.")
         df_raw.fillna(-1.0, inplace=True)
         real_age_list = []
         mean_list = []
@@ -48,7 +48,7 @@ class NeuralNetwork:
                 mode_list.append(df_raw['Mode'][i])
                 median_list.append(df_raw['Median'][i])
                 std_list.append(df_raw['std'][i])
-        logging.info("train_with_raw_data\t\tData collected. Starting training.")
+        logging.info("train_with_raw_data,Data collected. Starting training.")
         y_train_df = pd.DataFrame({
             "Real Age": real_age_list
         })
@@ -60,7 +60,7 @@ class NeuralNetwork:
             'std': std_list
         })
         self.reg.fit(x_train_df, y_train_df)
-        logging.info(f"train_with_raw_data\t\tModel trained successfully. Data length: {len(x_train_df)}. Saving data.")
+        logging.info(f"train_with_raw_data,Model trained successfully. Data length: {len(x_train_df)}. Saving data.")
         self.save_model(settings.neural_network_file)
 
     def save_model(self, filename):
@@ -70,7 +70,7 @@ class NeuralNetwork:
         :return: saves model in filename
         """
         pickle.dump(self.reg, open(filename, 'wb'))
-        logging.info("save_model\t\tModel saved successfully.")
+        logging.info("save_model,Model saved successfully.")
 
     def open_model(self, filename):
         """
@@ -79,7 +79,7 @@ class NeuralNetwork:
         :return: opens model from filename
         """
         self.reg = pickle.load(open(filename, 'rb'))
-        logging.info("open_model\t\tModel loaded successfully.")
+        logging.info("open_model,Model loaded successfully.")
 
     def query(self, ages):
         """
@@ -95,7 +95,7 @@ class NeuralNetwork:
         predicted = self.reg.predict([[mean, hmean, mode, median, std]])
         predicted = round(predicted[0][0], 2)
         logging.info(
-            f"query\t\tPredicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
+            f"query,Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
         )
         self.save_model(filename=settings.neural_network_file)
         return predicted
