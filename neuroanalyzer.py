@@ -97,5 +97,5 @@ class NeuralNetwork:
         logging.info(
             f"query,Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
         )
-        self.save_model(filename=settings.neural_network_file)
+        self.save_model(self, filename=settings.neural_network_file)
         return predicted
