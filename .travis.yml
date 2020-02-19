@@ -5,6 +5,6 @@ before_install:
   - echo "token='$vk_api';" >> settings.py
   - echo "tg-api='$tg_api';" >> settings.py
 install:
-  -pip install -r requirements.txt
+  - pip install -r requirements.txt
 script:
-  -pytest test.py
+  - pytest test.py
