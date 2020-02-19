@@ -26,7 +26,7 @@ def find_average_mode(arr):
 class NeuralNetwork:
     def __init__(self):
         self.reg = linear_model.LinearRegression()
-        logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d],%(levelname)-8s,[%(asctime)s],%(message)s',
+        logging.basicConfig(format=u'%(filename)s,%(lineno),%(levelname)s,%(asctime)s,%(message)s',
                             level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
         logging.info("INIT,Model initiated.")
         pass
