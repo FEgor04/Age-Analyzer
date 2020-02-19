@@ -2,8 +2,8 @@ language: python
 python:
   "3.7"
 before_install:
-  -echo "token='$vk_api';" >> settings.py
-  -echo "tg-api='$tg_api';" >> settings.py
+  - echo "token='$vk_api';" >> settings.py
+  - echo "tg-api='$tg_api';" >> settings.py
 install:
   -pip install -r requirements.txt
 script:
