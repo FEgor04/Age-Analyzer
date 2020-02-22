@@ -5,7 +5,7 @@ import statistics as st
 import numpy as np
 import pandas as pd
 from sklearn import linear_model
-
+import catboost
 import settings
 
 
@@ -25,42 +25,24 @@ def find_average_mode(arr):
 
 class NeuralNetwork:
     def __init__(self):
-        self.reg = linear_model.LinearRegression()
-        logging.basicConfig(format='%(created)s,%(name)s,"%(utc_time)s","%(eastern_time)s",%(levelname)s,"%(message)s"',
+        self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', use_best_model=True,
+                                         iterations=1000)
+        logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
                             level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
-        logging.info("INIT,Model initiated.")
+        logging.info("INIT^Model initiated.")
         pass
 
     def train_with_raw_data(self, df_raw: pd.DataFrame):
-        logging.info("train_with_raw_data,Started training.")
+        logging.info("train_with_raw_data^Started training.")
         df_raw.fillna(-1.0, inplace=True)
-        real_age_list = []
-        mean_list = []
-        hmean_list = []
-        median_list = []
-        mode_list = []
-        std_list = []
-        for i in range(df_raw.__len__()):
-            if df_raw['Mean'][i] != -1:
-                real_age_list.append(df_raw['Real Age'][i])
-                mean_list.append(df_raw['Mean'][i])
-                hmean_list.append(df_raw['Harmonic Mean'][i])
-                mode_list.append(df_raw['Mode'][i])
-                median_list.append(df_raw['Median'][i])
-                std_list.append(df_raw['std'][i])
-        logging.info("train_with_raw_data,Data collected. Starting training.")
-        y_train_df = pd.DataFrame({
-            "Real Age": real_age_list
-        })
-        x_train_df = pd.DataFrame({
-            'Mean': mean_list,
-            'Harmonic Mean': hmean_list,
-            'Mode': mode_list,
-            'Median': median_list,
-            'std': std_list
-        })
-        self.reg.fit(x_train_df, y_train_df)
-        logging.info(f"train_with_raw_data,Model trained successfully. Data length: {len(x_train_df)}. Saving data.")
+        df_filtered = df_raw[df_raw['Mean'] != -1]
+        train_columns = ['Mean', 'Harmonic Mean', 'Mode', 'Median', 'std']
+        x_train_df = df_filtered[train_columns]
+        y_train_df = df_filtered['Real Age']
+        logging.info("train_with_raw_data^Data collected. Starting training.")
+        self.reg.fit(x_train_df, y_train_df, plot=False, verbose=False)
+        logging.info(f"train_with_raw_data^Catboost Regressor fitted successfully."
+                     f"Tree Count: {self.reg.tree_count}. Saving data.")
         self.save_model(settings.neural_network_file)
 
     def save_model(self, filename):
@@ -69,8 +51,8 @@ class NeuralNetwork:
         :param filename: file to save model in
         :return: saves model in filename
         """
-        pickle.dump(self.reg, open(filename, 'wb'))
-        logging.info("save_model,Model saved successfully.")
+        self.reg.save_model(filename)
+        logging.info("save_model^Model saved successfully.")
 
     def open_model(self, filename):
         """
@@ -78,8 +60,10 @@ class NeuralNetwork:
         :param filename: file to open model from
         :return: opens model from filename
         """
-        self.reg = pickle.load(open(filename, 'rb'))
-        logging.info("open_model,Model loaded successfully.")
+        self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', use_best_model=True,
+                                              iterations=1000)
+        self.reg.load_model(filename)
+        logging.info(f"open_model^Model loaded successfully. Tree Count: {self.reg.tree_count_}")
 
     def query(self, ages):
         """
@@ -92,10 +76,10 @@ class NeuralNetwork:
         hmean = round(st.harmonic_mean(ages), 2)
         mode = round(find_average_mode(ages), 2)
         std = round(np.array(ages).std(), 2)
-        predicted = self.reg.predict([[mean, hmean, mode, median, std]])
-        predicted = round(predicted[0][0], 2)
+        predicted = self.reg.predict([mean, hmean, mode, median, std])
+        predicted = round(predicted, 2)
         logging.info(
-            f"query,Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
+            f"query^Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
         )
-        self.save_model(self, filename=settings.neural_network_file)
+        self.save_model(filename=settings.neural_network_file)
         return predicted

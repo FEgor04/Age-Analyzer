@@ -1,6 +1,7 @@
 import age_analyzer
 import neuroanalyzer
 import settings
+import csv_connect
 import tg as telegram_bot
 import statistics as st
 
@@ -20,6 +21,7 @@ def find_average_mode(arr):
 
 
 if __name__ == "__main__":
+
     if settings.analyze:
         print("Input target's ID:", end=" ")
         target = input()
