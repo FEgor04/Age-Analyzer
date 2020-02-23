@@ -126,7 +126,7 @@ def build_histogram(message):
     except:
         logging.info(f"histogram_response^Wrong format. Requested by {by}")
         bot.send_message(message.chat.id, "Введите по формату\n"
-                                          "/analyze {id}")
+                                          "/histogram {id}")
         return
     logging.info(f"histogram_request^{by} wants to build histogram {to_build}")
     ages = age_analyzer.get_friends_ages(to_build)
