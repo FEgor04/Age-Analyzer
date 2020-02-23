@@ -24,6 +24,9 @@ def find_average_mode(arr):
 
 
 class NeuralNetwork:
+    """
+    Class for catboost.CatBoostRegressor
+    """
     def __init__(self):
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', use_best_model=True,
                                          iterations=1000)
