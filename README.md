@@ -28,7 +28,7 @@ tg_api = 'your_telegram_token'
                     # If you need logging:
 log_needed = True
 ```
-## How to analyze someone's age:
+## How to analyze someone's age 
 
 Set ``target`` variable equal to target's id or short link <br>
 Then launch `__main__.py` file with this:
@@ -36,5 +36,3 @@ Then launch `__main__.py` file with this:
 python __main__.py
 ```
 Script will ask you to input target's ID, and then it will print his age.
-<hr>
-
