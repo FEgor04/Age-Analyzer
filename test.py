@@ -3,19 +3,21 @@ import age_analyzer
 import neuroanalyzer
 import pytest
 
+
 def test_get_age():
     """
     Test age_analyzer.get_age function
     """
     age = age_analyzer.get_age("fegor2004")
-    assert age==24
+    assert age == 24
 
-    def test_get_bdate():
-        """
-        Test age_analyzer.get_bdate function
-        """
-        bdate = age_analyzer.get_bdate("fegor2004")
-        assert bdate == '5.8.1995'
+
+def test_get_bdate():
+    """
+    Test age_analyzer.get_bdate function
+    """
+    bdate = age_analyzer.get_bdate("fegor2004")
+    assert bdate == '5.8.1995'
 
 
 def test_get_friends_bdates():
@@ -56,7 +58,7 @@ def test_open_model():
     """
     reg = neuroanalyzer.NeuralNetwork
     reg.open_model(reg, filename=settings.project_folder + '/' + settings.neural_network_file)
-    assert 1 == 1
+    assert 1 == 1  # It test if there will be no exception, so it is okay
 
 
 def test_save_model():
@@ -66,7 +68,7 @@ def test_save_model():
     reg = neuroanalyzer.NeuralNetwork
     reg.open_model(reg, filename=settings.project_folder + '/' + settings.neural_network_file)
     reg.save_model(reg, filename=settings.project_folder + '/' + settings.neural_network_file)
-    assert 1 == 1
+    assert 1 == 1  # It test if there will be no exception, so it is okay
 
 
 def test_query():
@@ -75,6 +77,7 @@ def test_query():
     """
     reg = neuroanalyzer.NeuralNetwork
     reg.open_model(reg, filename=settings.project_folder + '/' + settings.neural_network_file)
-    predicted = reg.query([21, 21, 21, 24, 24, 51, 51, 24, 17, 16, 16, 22, 91, 91, 91, 21, 15, 15, 25, 15, 14, 35, 34,
+    predicted = reg.query(reg,
+                          [21, 21, 21, 24, 24, 51, 51, 24, 17, 16, 16, 22, 91, 91, 91, 21, 15, 15, 25, 15, 14, 35, 34,
                            20, 20, 28, 15, 16, 20, 15, 24, 47, 25, 15, 16])
     assert 15 == pytest.approx(predicted, 5)
