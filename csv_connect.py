@@ -7,7 +7,7 @@ import age_analyzer as analyzer
 
 def people_with_open_profile(data: pd.DataFrame):
     """
-
+    Finds count of people with open profile
     :param data: pandas.DataFrame with needed cells
     :return: count of people whose profile is open
     """
@@ -16,8 +16,8 @@ def people_with_open_profile(data: pd.DataFrame):
 
 
 def find_average_mode(arr):
-    """"
-
+    """
+    Finds average mode of arr
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
@@ -49,7 +49,7 @@ def fill_vk_age(input_csv, output_csv):
 def fill_friends_age(input_csv, output_csv):
     """
 
-    This function fills friends ages' Mean, Median, etc.
+    Function fills friends ages' Mean, Median, etc.
 
     :param input_csv: where to get data
     :param output_csv: where to put data
@@ -99,7 +99,7 @@ def fill_friends_age(input_csv, output_csv):
 
 def people_who_specified_age(data: pd.DataFrame):
     """
-
+    Finds count of people who specified their age in VK
     :param data: pandas.DataFrame with needed cells
     :return: Count of people who specify their age
     """
@@ -109,7 +109,7 @@ def people_who_specified_age(data: pd.DataFrame):
 
 def people_whose_vk_age_is_equal_to_real_age(data: pd.DataFrame):
     """
-
+    Find count of people whose real age if equal to VK age
     :param data: pandas.DataFrame with needed cells
     :return: Count of people whose VK age is equal to Real Age
     """
@@ -119,7 +119,7 @@ def people_whose_vk_age_is_equal_to_real_age(data: pd.DataFrame):
 
 def fill_error_list(data: pd.DataFrame) -> pd.DataFrame:
     """
-
+    Fills error_list array
     :param data: pandas.DataFrame with needed cells
     :return: pd.DataFrame with error list filled with columns - Mean, HMean, Median, Mode
     """

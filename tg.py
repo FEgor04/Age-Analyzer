@@ -87,14 +87,17 @@ def answer(message):
     except:
         try:
             logging.info(f"analyze_response^Wrong format. Requested by {by}")
+            return
         except:
             logging.error(f"analyze_error")
         bot.send_message(message.chat.id, "Введите по формату\n"
                                           "/analyze {id}")
+        return
     try:
         logging.info(f"analyze_request^{by} wants to analyze {to_build}".encode("ascii", errors='xmlcharrefreplace'))
     except:
         logging.error(f"analyze_error")
+        return
     ages = age_analyzer.get_friends_ages(to_build)
     if age_analyzer.is_profile_closed(to_build) or ages == "PC":
         logging.info(f"analyze_response^{to_build} - no profile. Requested by {by}")
@@ -145,13 +148,14 @@ def build_histogram(message):
         plt.xlim(min(ages) - 5, max(ages) + 5)
         plt.ylim(0, max(y) + 5)
         plt.yticks(np.arange(0, max(y) + 5, 5))
-        plt.xticks(np.arange(min(ages), max(ages), 5))
+        plt.xticks(np.arange(min(ages) - (int(min(ages)) % 5), max(ages) + 5, 5))
         plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
         plt.ylabel("Count", fontsize=16)
         plt.xlabel("Age", fontsize=16)
         plt.savefig(f"{settings.project_folder}/graph/{to_build}.png")
+        logging.info(
+            f"histogram_response^Histogram saved to {settings.project_folder}/graph/{to_build}.png. Sending it back.")
         photo = open(f"{settings.project_folder}/graph/{to_build}.png", 'rb')
-        logging.info("histogram_response^Histogram built. Sending it back.")
         bot.send_message(message.chat.id,
                          f"Мы построили гистограмму возрастов друзей"
                          f" пользователя {target_name['first_name']} {target_name['last_name']}.")
@@ -159,4 +163,3 @@ def build_histogram(message):
         bot.send_photo(message.chat.id, photo)
         plt.close()
         photo.close()
-    

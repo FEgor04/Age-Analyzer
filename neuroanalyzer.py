@@ -1,17 +1,14 @@
-import datetime
-import pickle
 import logging
 import statistics as st
 import numpy as np
 import pandas as pd
-from sklearn import linear_model
 import catboost
 import settings
 
 
 def find_average_mode(arr):
-    """"
-
+    """
+    Finds average mode in arr
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
@@ -28,6 +25,9 @@ class NeuralNetwork:
     Class for catboost.CatBoostRegressor
     """
     def __init__(self):
+        """
+        Initiate NeuralNetwork
+        """
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', iterations=1000)
         logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
                             level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
@@ -74,7 +74,7 @@ class NeuralNetwork:
 
     def query(self, ages):
         """
-
+        Query to catboost model
         :param ages: list with ages
         :return: estimated age by list with ages
         """
