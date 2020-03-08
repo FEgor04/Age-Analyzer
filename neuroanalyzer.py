@@ -47,7 +47,7 @@ class NeuralNetwork:
         x_train_df = df_filtered[train_columns]
         y_train_df = df_filtered['Real Age']
         logging.info("train_with_raw_data^Data collected. Starting training.")
-        self.reg.fit(x_train_df, y_train_df, plot=False, verbose=False)
+        self.reg.fit(x_train_df, y_train_df, verbose=False)
         logging.info(f"train_with_raw_data^Catboost Regressor fitted successfully."
                      f"Tree Count: {self.reg.tree_count_}. Saving data.")
         self.save_model(settings.neural_network_file)
@@ -88,5 +88,5 @@ class NeuralNetwork:
         logging.info(
             f"query^Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
         )
-        self.save_model(self, filename=settings.neural_network_file)
+        self.save_model(filename=settings.neural_network_file)
         return predicted

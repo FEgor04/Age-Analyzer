@@ -3,9 +3,8 @@
 import datetime
 import math
 import statistics
-
+from dateutil.relativedelta import relativedelta
 import requests
-
 import settings
 
 
@@ -55,12 +54,13 @@ def is_profile_closed(target):
         "fields": "",
         "name_case": "Nom"
     })
+    r = r.json()
     try:
-        data = r.json()['response'][0]
+        data = r['response'][0]
     except:
         return True
     try:
-        return not(data['can_access_closed'] or data['is_closed'])
+        return data['is_closed']
     except:
         return True
 
@@ -234,7 +234,5 @@ def get_age_by_bdate(birth_date_str):
     birth_month = int(birth_date_str_list[1])
     birth_year = int(birth_date_str_list[2])
     birth_date = datetime.date(birth_year, birth_month, birth_day)
-    age = today_date.toordinal() - birth_date.toordinal()
-    age = age - age / 366
-    age = math.floor(age / 365)
-    return age
+    age = relativedelta(today_date, birth_date)
+    return age.years
