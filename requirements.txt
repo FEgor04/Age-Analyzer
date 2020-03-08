@@ -5,4 +5,3 @@ matplotlib
 pyTelegramBotAPI
 catboost
 pytest
-unittest

@@ -122,7 +122,7 @@ def get_id_by_domain(target):
         pass
 
 
-def get_friends(target, count):
+def get_friends(target, count=5001):
     """
 
     :param target: VK id

@@ -30,7 +30,8 @@ def test_get_bdate(target: str, expected: str):
 
 
 @pytest.mark.parametrize("target, wrong, comment", [
-    ("fegor2004", "PC", "Profile is open, so it should not give PC")
+    ("fegor2004", "PC", "Profile is open, so it should not give PC"),
+    ("dasdasdaatggrtefsdg", [], "There is no profile")
 ])
 def test_get_friends_bdates(target: str, wrong, comment):
     """
@@ -42,6 +43,7 @@ def test_get_friends_bdates(target: str, wrong, comment):
 
 @pytest.mark.parametrize("target, wrong, comment", [
     ('fegor2004', 'PC', "Profile is open, so it should not give PC"),
+    ("dasdasdaatggrtefsdg", [], "There is no profile")
 ])
 def test_get_friends_ages(target: str, wrong, comment):  # It shouldn't give wrong answer
     """
@@ -56,7 +58,9 @@ def test_get_friends_ages(target: str, wrong, comment):  # It shouldn't give wro
     ('2.2.2000', 20),
     ('3.3.2000', 20),
     ('12.12.2000', 19),
-    ('3.3.2020', 0)
+    ('3.3.2020', 0),
+    ('5.5', -1),
+    (-1, -1)
 ])
 def test_get_age_by_bdate(bdate: str, expected: int):
     """
@@ -109,5 +113,31 @@ def test_find_max_mode(array: list, expected: int):
     ('sasassaasdas', True)  # There is no profile like that
 ])
 def test_is_profile_closed(target: str, expected: bool):
+    """
+    Test age_analyzer.is_profile_closed function
+    """
     pred = age_analyzer.is_profile_closed(target)
     assert expected == pred
+
+
+@pytest.mark.parametrize("target, expected", [
+    ("fegor2004", -1),
+])
+def test_get_friends(target, expected):
+    """
+    Test age_analyzer.get_friends function
+    """
+    friends = age_analyzer.get_friends(target)
+    assert expected == pytest.approx(len(friends), 3)
+
+
+@pytest.mark.parametrize("target, expected", [
+    ("fegor2004", "Egor Fedorov"),
+    ("ms6mtudgpymryvn9rfz4cwlpjdrqvwpn", "Nikita Lazarev")
+])
+def test_get_name(target, expected):
+    """
+    Test age_analyzer.get_name function
+    """
+    name = age_analyzer.get_name(target)
+    assert name['first_name'] + ' ' + name['last_name'] == expected
