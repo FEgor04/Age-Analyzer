@@ -118,21 +118,22 @@ def get_id_by_domain(target):
         pass
 
 
-def get_friends(target, count=5001):
+def get_friends(target, count=10000):
     """
 
     :param target: VK id
     :param count: count of friends you want to get
     :return: dict with target's friends
     """
+    print(count)
     all_data = []
+    target_id = get_id_by_domain(target)
     r = requests.get("https://api.vk.com/method/friends.get", params={
         "v": settings.version,
         "access_token": settings.token,
-        "user_id": get_id_by_domain(target),
-        "order": "name",
+        "user_id": target_id,
+        "order": "random",
         "count": count,
-        "fields": "nickname"
     })
     r = r.json()
     try:
@@ -140,20 +141,8 @@ def get_friends(target, count=5001):
         all_data.extend(data)
     except:
         return -1
-    if count > 5000:
-        r = requests.get("https://api.vk.com/method/friends.get", params={
-            "v": settings.version,
-            "access_token": settings.token,
-            "user_id": get_id_by_domain(target),
-            "order": "name",
-            "count": count - 5000,
-            "offset": 5000,
-            "fields": "nickname",
-            "name_case": "nom"
-        })
-        r = r.json()
-        data = r['response']['items']
-        all_data.extend(data)
+    print(r)
+    print(data)
     return all_data
 
 
@@ -202,7 +191,7 @@ def get_friends_bdate(target):
         "order": "name",
         "fields": "bdate",
         "name_case": "nom",
-        "count": "10000"
+        "count": 10000
     })
     try:
         return r.json()['response']['items']

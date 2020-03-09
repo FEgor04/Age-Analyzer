@@ -129,11 +129,12 @@ def test_get_friends(target, expected):
     """
     Test age_analyzer.get_friends function
     """
-    friends = age_analyzer.get_friends(target)
+    friends = age_analyzer.get_friends(target, 9999)
     if type(friends) == int:
         assert friends == expected
     else:
-        assert expected == pytest.approx(len(friends), 3)
+        print(len(friends))
+        assert abs(expected-len(friends)) <= 5
 
 
 @pytest.mark.parametrize("target, expected", [
