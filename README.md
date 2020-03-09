@@ -1,7 +1,10 @@
-
-## Install
-
+#Age Analyzer
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0bd5abc01d3a4b13a99a2d343aafdacd)](https://app.codacy.com/manual/fegor2004/Age-Analyzer?utm_source=github.com&utm_medium=referral&utm_content=FEgor04/Age-Analyzer&utm_campaign=Badge_Grade_Dashboard)
+[![Travis][build-badge]][build]
+
+[build-badge]: https://img.shields.io/travis/FEgor04/Age-Analyzer/master.png?style=flat-square
+[build]: https://travis-ci.org/FEgor04/Age-Analyzer
+## Install
 
 At first, make sure you have this libraries:
   1. requests 

@@ -32,7 +32,6 @@ class AgeRegressor:
         logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
                             level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
         logging.info("INIT^Model initiated.")
-        pass
 
     def train_with_raw_data(self, df_raw: pd.DataFrame):
         """
