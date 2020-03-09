@@ -1,8 +1,6 @@
-import settings
-import age_analyzer
-import neuroanalyzer
 import pytest
-from unittest.mock import Mock
+
+import age_analyzer
 
 
 @pytest.mark.parametrize("target, expected", [
@@ -19,7 +17,8 @@ def test_get_age(target: str, expected: int):
 
 @pytest.mark.parametrize("target, expected", [
     ('fegor2004', '5.8.1995'),
-    ('gallium', '9.7.1999')
+    ('gallium', '9.7.1999'),
+    ('adasdasdasdsada', -1)
 ])
 def test_get_bdate(target: str, expected: str):
     """
@@ -121,23 +120,33 @@ def test_is_profile_closed(target: str, expected: bool):
 
 
 @pytest.mark.parametrize("target, expected", [
-    ("fegor2004", -1),
+    ("fegor2004", 74),
+    ("dasdasdaatggrtefsdg", -1),
+    ("a_medvedev_01", 9937)
+
 ])
 def test_get_friends(target, expected):
     """
     Test age_analyzer.get_friends function
     """
     friends = age_analyzer.get_friends(target)
-    assert expected == pytest.approx(len(friends), 3)
+    if type(friends) == int:
+        assert friends == expected
+    else:
+        assert expected == pytest.approx(len(friends), 3)
 
 
 @pytest.mark.parametrize("target, expected", [
     ("fegor2004", "Egor Fedorov"),
-    ("ms6mtudgpymryvn9rfz4cwlpjdrqvwpn", "Nikita Lazarev")
+    ("ms6mtudgpymryvn9rfz4cwlpjdrqvwpn", "Nikita Lazarev"),
+    ("asasadsadasdsadasd", -1)
 ])
 def test_get_name(target, expected):
     """
     Test age_analyzer.get_name function
     """
     name = age_analyzer.get_name(target)
-    assert name['first_name'] + ' ' + name['last_name'] == expected
+    if type(name) == int:
+        assert name == expected
+    else:
+        assert name['first_name'] + ' ' + name['last_name'] == expected

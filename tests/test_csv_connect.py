@@ -1,10 +1,7 @@
-import settings
-import age_analyzer
-import neuroanalyzer
-import pytest
-import csv_connect
 import pandas as pd
-from unittest.mock import Mock
+import pytest
+
+import csv_connect
 
 
 @pytest.mark.parametrize("dataframe_raw, expected", [
@@ -118,7 +115,25 @@ def test_fill_vk_age(data: pd.DataFrame, expected: pd.Series):
     Test csv_connect.fill_vK_age function
     """
     data_filled = csv_connect.fill_vk_age(data)
-    print('\n')
-    print(data_filled['VK Age'])
-    print(expected)
     assert data_filled['VK Age'].all() == expected.all()
+
+
+@pytest.mark.parametrize("df, expected", [
+    (
+            pd.DataFrame({
+                "ID": ['fegor2004', 'id41417392', 'assasa', 'asdasd'],
+                "Real Age": [15, 15, 21, 13],
+                "VK Age": [-1, -1.0, 21, 13],
+                "Mean": [-1, -1.0, 1, 1],
+                "Harmonic Mean": [-1, -1.0, 1, 1],
+                "Mode": [-1, -1.0, 1, 1],
+                "Median": [-1, -1.0, 1, 1],
+                "std": [-1, -1, 1, 1]
+            }), 2
+    )
+])
+def test_people_whose_vk_age_is_equal_to_real_age(df: pd.DataFrame, expected: int):
+    """
+    Test csv_connect.people_whose_vk_age_is_equal_to_real_age function
+    """
+    assert csv_connect.people_whose_vk_age_is_equal_to_real_age(df) == expected

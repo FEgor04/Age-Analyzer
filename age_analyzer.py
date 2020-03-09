@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import math
 import statistics
 from dateutil.relativedelta import relativedelta
 import requests
@@ -59,10 +58,7 @@ def is_profile_closed(target):
         data = r['response'][0]
     except:
         return True
-    try:
-        return data['is_closed']
-    except:
-        return True
+    return data['is_closed']
 
 
 def get_bdate(target):
@@ -156,11 +152,8 @@ def get_friends(target, count=5001):
             "name_case": "nom"
         })
         r = r.json()
-        try:
-            data = r['response']['items']
-            all_data.extend(data)
-        except:
-            return -1
+        data = r['response']['items']
+        all_data.extend(data)
     return all_data
 
 
