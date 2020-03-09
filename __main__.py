@@ -1,8 +1,10 @@
 import age_analyzer
 import neuroanalyzer
 import settings
+import csv_connect
 import tg as telegram_bot
 import statistics as st
+import pandas as pd
 
 
 def find_average_mode(arr):
@@ -20,25 +22,39 @@ def find_average_mode(arr):
 
 
 if __name__ == "__main__":
-
-    if settings.analyze:
+    ANALYZE = False  # Set it by yourself
+    BOT = False
+    FILL_CSV = False
+    TRAIN_MODEL = False
+    if FILL_CSV:
+        df = pd.read_csv('age_research.csv')
+        df = csv_connect.fill_friends_age(df)
+        df = csv_connect.fill_vk_age(df)
+        df.fillna(-1.0, inplace=True)
+        df.to_csv('age_research1.csv', index=False)
+    if TRAIN_MODEL:
+        df = pd.read_csv('age_research1.csv')
+        model = neuroanalyzer.AgeRegressor()
+        model.train_with_raw_data(df)
+        model.score()
+    if ANALYZE:
         print("Input target's ID:", end=" ")
         target = input()
-        neural_network = neuroanalyzer.NeuralNetwork()
+        model = neuroanalyzer.AgeRegressor()
         # neural_network.train_with_raw_data(df_with_data)
         # File should be formatted like:
         # ID,Real Age,VK Age,Mean,Harmonic Mean,Mode,Median,std'
         # OR:
         # Bot loads neural network from file
-        neural_network.open_model(settings.neural_network_file)
+        model.open_model(settings.neural_network_file)
         ages = age_analyzer.get_friends_ages(target=target)
         name = age_analyzer.get_name(target=target)
         try:
-            predicted = neural_network.query(ages)
+            predicted = model.query(ages)
             answer = f"Neural network thinks that {name['first_name']} {name['last_name']}" \
                      f"({target}) age is {predicted}"
         except:
             answer = "Profile closed"
         print(answer)
-    else:
+    elif BOT:
         telegram_bot.launch()

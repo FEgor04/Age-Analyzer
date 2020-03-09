@@ -20,13 +20,13 @@ def find_average_mode(arr):
     return int(st.mean(new_list))
 
 
-class NeuralNetwork:
+class AgeRegressor:
     """
     Class for catboost.CatBoostRegressor
     """
     def __init__(self):
         """
-        Initiate NeuralNetwork
+        Initiate AgeRegressor
         """
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', iterations=1000)
         logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',

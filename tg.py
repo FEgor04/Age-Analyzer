@@ -1,4 +1,3 @@
-import datetime
 import statistics as st
 import numpy as np
 import logging
@@ -8,10 +7,10 @@ import telebot
 import age_analyzer
 import neuroanalyzer
 import settings
-from neuroanalyzer import NeuralNetwork
+from neuroanalyzer import AgeRegressor
 
 bot = telebot.TeleBot(settings.tg_api)
-neural_network: NeuralNetwork = neuroanalyzer.NeuralNetwork()
+neural_network: AgeRegressor = neuroanalyzer.AgeRegressor()
 
 
 def counts_by_arr(arr: np.ndarray) -> np.ndarray:
