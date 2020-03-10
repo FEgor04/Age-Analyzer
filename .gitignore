@@ -4,3 +4,8 @@ settings.py
 Pipfile
 Pipfile.lock
 /csv/
+.coverage
+age_research.csv
+age_research1.csv
+.pytest_cache
+tests/.pytest_cache

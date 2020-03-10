@@ -1,10 +1,12 @@
+import statistics as st
+
+import pandas as pd
+
 import age_analyzer
+import csv_connect
 import neuroanalyzer
 import settings
-import csv_connect
 import tg as telegram_bot
-import statistics as st
-import pandas as pd
 
 
 def find_average_mode(arr):
@@ -25,7 +27,7 @@ if __name__ == "__main__":
     ANALYZE = False  # Set it by yourself
     BOT = False
     FILL_CSV = False
-    TRAIN_MODEL = False
+    TRAIN_MODEL = True
     if FILL_CSV:
         df = pd.read_csv('age_research.csv')
         df = csv_connect.fill_friends_age(df)
@@ -36,7 +38,7 @@ if __name__ == "__main__":
         df = pd.read_csv('age_research1.csv')
         model = neuroanalyzer.AgeRegressor()
         model.train_with_raw_data(df)
-        model.score()
+        model.save_model('neuronet.sav')
     if ANALYZE:
         print("Input target's ID:", end=" ")
         target = input()
