@@ -147,7 +147,7 @@ def test_get_name(target, expected):
     Test age_analyzer.get_name function
     """
     name = age_analyzer.get_name(target)
-    if type(name) == int:
+    if isinstance(name, int):
         assert name == expected
     else:
         assert name['first_name'] + ' ' + name['last_name'] == expected
