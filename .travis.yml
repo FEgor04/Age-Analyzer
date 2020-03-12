@@ -1,9 +1,6 @@
 language: python
 python:
   "3.6.9"
-before_install:
-  - echo "token='$vk_api';" >> settings.py
-  - echo "tg_api='$tg_api';" >> settings.py
 install:
   - pip install -r requirements.txt
   - pip install codecov

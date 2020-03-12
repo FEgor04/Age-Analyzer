@@ -27,7 +27,7 @@ if __name__ == "__main__":
     ANALYZE = False  # Set it by yourself
     BOT = False
     FILL_CSV = False
-    TRAIN_MODEL = True
+    TRAIN_MODEL = False
     if FILL_CSV:
         df = pd.read_csv('age_research.csv')
         df = csv_connect.fill_friends_age(df)
