@@ -8,3 +8,8 @@ script:
   - coverage run -m pytest
 after_success:
   - codecov
+  - echo "${SFTP_KEY}" | base64 --decode > /tmp/sftp_rsa
+  - curl --ftp-create-dirs
+    -T filename
+    --key /tmp/sftp_rsa
+    sftp://${SFTP_USER}:${SFTP_PASSWORD}@{VDS_IP}/Age-Analyzer
