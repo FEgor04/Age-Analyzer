@@ -1,22 +1,24 @@
+name: Python coverage tests
+
 on:
   push:
-    tags:
-      - '!refs/tags/*'
-    branches:
-      - '*'
+    branches: [master]
+
+
 jobs:
   run_tests:
     runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@master
-      - uses: actions/setup-python@v1
-        with:
-          python-version: '3.6.9'
-          architecture: 'x64'
-      - name: Install requirements
-        run: pip install -r requirements.txt
+      - name: Set up Python 3.6.9
+          uses: actions/setup-python@v1
+          with:
+            python-version: 3.6.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
       - name: Set environment variables
-        env: tg_api :${{ secrets.tg_api }}, vk_api :${{ secrets.vk_api }}
       - name: Run tests
         run: coverage run -m pytest
       - name: Tests report
