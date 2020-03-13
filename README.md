@@ -32,13 +32,17 @@ To collect data, you need to create **.csv** file and fill it like that:
 | ID        | Real Age | VK Age | Mean | Harmonic Mean | Mode | Median | std |
 |-----------|----------|--------|------|---------------|------|--------|-----|
 | fegor2004 | 15       | 24     |      |               |      |        |     |
-|-----------|----------|--------|------|---------------|------|--------|-----|
+
+
 And so on.. <br>
 Then set `FILL_CSV` variable to **TRUE** and launch script
 
 ## How to train model
 To train model, make sure your .csv table is filled. <br>
 Then, set `TRAIN_MODEL` variable to **TRUE** and launch script.
-## How to launch bot
+## How to launch bots
 To launch bot, you should have your `neuronet.sav` file with trained model.
 Then, just set `BOT` variable to **TRUE** and launch script 
+
+# Demonstration
+![Gif demonstration](https://i.imgur.com/BOFoMBt.gif)
