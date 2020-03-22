@@ -33,7 +33,6 @@ To collect data, you need to create **.csv** file and fill it like that:
 |-----------|----------|--------|------|---------------|------|--------|-----|
 | fegor2004 | 15       | 24     |      |               |      |        |     |
 
-
 And so on.. <br>
 Then set `FILL_CSV` variable to **TRUE** and launch script
 
@@ -44,5 +43,5 @@ Then, set `TRAIN_MODEL` variable to **TRUE** and launch script.
 To launch bot, you should have your `neuronet.sav` file with trained model.
 Then, just set `BOT` variable to **TRUE** and launch script 
 
-# Demonstration
+## Demonstration
 ![Gif demonstration](https://i.imgur.com/BOFoMBt.gif)

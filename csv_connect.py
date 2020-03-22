@@ -33,8 +33,7 @@ def find_average_mode(arr):
 def fill_vk_age(data: pd.DataFrame):
     """
     Fills VK Age in output_csv file
-    :param input_csv: where to get data from
-    :param output_csv: where to put data
+    :param data:
     """
     for i in range(0, data.__len__()):
         target = data['ID'][i]

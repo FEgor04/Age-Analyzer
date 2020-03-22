@@ -9,3 +9,12 @@ age_research.csv
 age_research1.csv
 .pytest_cache
 tests/.pytest_cache
+/.codacy-coverage/
+/.pytest_cache/
+/htmlcov/
+/catboost_info/
+/.envrc
+/Dockerfile
+/age_research1.csv
+/age_research.csv
+/tests/catboost_info/

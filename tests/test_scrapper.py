@@ -140,7 +140,7 @@ def test_get_friends(target, expected):
         assert friends == expected
     else:
         print(len(friends))
-        assert abs(expected-len(friends)) <= 5
+        assert abs(expected - len(friends)) <= 5
 
 
 @pytest.mark.parametrize("target, expected", [

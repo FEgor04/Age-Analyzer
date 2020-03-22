@@ -1,12 +1,14 @@
-import statistics as st
-import numpy as np
 import logging
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import telebot
+
 import age_analyzer
 import neuroanalyzer
 import settings
+from age_analyzer import find_max_mode
 from neuroanalyzer import AgeRegressor
 
 bot = telebot.TeleBot(settings.tg_api)
@@ -39,43 +41,6 @@ def launch():
                         level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
     logging.info("launch^Bot launched.")
     bot.polling()
-
-
-def find_max_mode(list1):
-    """
-
-    This function finds maximal mode in list1
-
-    :param list1: list, mode of each you want to get
-    :return max_mode. If there are many modes, it will return maximal of them
-    """
-    list_table = st._counts(list1)
-    len_table = len(list_table)
-
-    if len_table == 1:
-        max_mode = st.mode(list1)
-    else:
-        new_list = []
-        for i in range(len_table):
-            new_list.append(list_table[i][0])
-        max_mode = max(new_list)
-    return max_mode
-
-
-def find_average_mode(arr):
-    """
-
-    This function finds average mode in arr
-
-    :param arr: list, mode of each you want to get
-    :return mode. If there are many modes, it will return average of them
-    """
-    list_table = st._counts(arr)
-    len_table = len(list_table)
-    new_list = []
-    for i in range(len_table):
-        new_list.append(list_table[i][0])
-    return int(st.mean(new_list))
 
 
 @bot.message_handler(commands=['analyze'])
