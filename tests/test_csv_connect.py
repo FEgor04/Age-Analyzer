@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 import pytest
 
@@ -86,6 +88,9 @@ def test_people_who_specified_age(data: pd.DataFrame, expected: int):
      )
     )
 ])
+@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > (3, 6, 9),
+                    reason="Requires statistics._counts, which is not present in 3.7 or "
+                           "higher")
 def test_fill_friends_age(data: pd.DataFrame, expected: pd.DataFrame):
     """
     Test csv_connect.fill_friends_age function

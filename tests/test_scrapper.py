@@ -77,8 +77,8 @@ def test_get_id_by_domain(target: str, expected: int):
     """
     Test age_analyzer.get_id_by_domain function
     """
-    id = age_analyzer.get_id_by_domain(target)
-    assert id == expected, f"Should be {expected}"
+    target_id = age_analyzer.get_id_by_domain(target)
+    assert target_id == expected, f"Should be {expected}"
 
 
 @pytest.mark.parametrize("array, expected", [
@@ -136,7 +136,7 @@ def test_get_friends(target, expected):
     Test age_analyzer.get_friends function
     """
     friends = age_analyzer.get_friends(target, 9999)
-    if type(friends) == int:
+    if isinstance(friends, int):
         assert friends == expected
     else:
         print(len(friends))

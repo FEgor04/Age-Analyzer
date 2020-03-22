@@ -171,7 +171,7 @@ def get_friends_ages(target):
     for person in friends_bdate:
         try:
             age = get_age_by_bdate(person['bdate'])
-        except:
+        except KeyError:
             pass
         if age != -1:
             ages.append(age)

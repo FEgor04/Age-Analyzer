@@ -55,7 +55,7 @@ if __name__ == "__main__":
             predicted = model.query(ages)
             answer = f"Neural network thinks that {name['first_name']} {name['last_name']}" \
                      f"({target}) age is {predicted}"
-        except:
+        except TypeError:
             answer = "Profile closed"
         print(answer)
     elif BOT:
