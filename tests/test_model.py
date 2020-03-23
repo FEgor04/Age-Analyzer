@@ -5,6 +5,7 @@ import pytest
 
 import neuroanalyzer
 import settings
+from settings import min_version
 
 
 def test_init():
@@ -32,7 +33,7 @@ def test_save_model():
     assert 1 == 1, "It should not give any exceptions"  # Passed if there will be no exception, so it is okay
 
 
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > (3, 6, 9),
+@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
                     reason="Requires statistics._counts, which is not present in 3.7 or "
                            "higher")
 def test_query():
@@ -47,7 +48,7 @@ def test_query():
     assert abs(15 - predicted) <= 1, "Should be 15±1"
 
 
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > (3, 6, 9),
+@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
                     reason="Requires statistics._counts, which is not present in 3.7 or "
                            "higher")
 def test_train_with_raw_data():

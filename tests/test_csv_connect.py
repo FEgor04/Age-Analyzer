@@ -4,19 +4,21 @@ import pandas as pd
 import pytest
 
 import csv_connect
+from settings import min_version
+
+test_df = pd.DataFrame({
+    "ID": ['fegor2004', 'id41417392'],
+    "Real Age": [15, 15],
+    "VK Age": [24.0, -1.0],
+    "Mean": [27.91, -1.0],
+    "Harmonic Mean": [21.05, -1.0],
+    "Mode": [15.0, -1.0],
+    "Median": [21.0, -1.0],
+    "std": [21.4, -1.0]
+})
 
 
 @pytest.mark.parametrize("dataframe_raw, expected", [
-    (pd.DataFrame({
-        "ID": ['fegor2004', 'id41417392'],
-        "Real Age": [15, 15],
-        "VK Age": [24.0, -1.0],
-        "Mean": [27.91, -1.0],
-        "Harmonic Mean": [21.05, -1.0],
-        "Mode": [15.0, -1.0],
-        "Median": [21.0, -1.0],
-        "std": [21.4, -1.0]
-    }), 1),
     (pd.DataFrame({
         "ID": ['id41417392'],
         "Real Age": [15],
@@ -65,30 +67,9 @@ def test_people_who_specified_age(data: pd.DataFrame, expected: int):
 
 
 @pytest.mark.parametrize("data, expected", [
-    (pd.DataFrame({
-        "ID": ['fegor2004', 'id41417392'],
-        "Real Age": [15, 15],
-        "VK Age": [24.0, -1.0],
-        "Mean": [27.91, -1.0],
-        "Harmonic Mean": [21.05, -1.0],
-        "Mode": [15.0, -1.0],
-        "Median": [21.0, -1.0],
-        "std": [21.4, -1.0]
-    }),
-     (pd.DataFrame({
-         "ID": ['fegor2004', 'id41417392'],
-         "Real Age": [15, 15],
-         "VK Age": [24.0, -1.0],
-         "Mean": [27.91, -1.0],
-         "Harmonic Mean": [21.05, -1.0],
-         "Mode": [15.0, -1.0],
-         "Median": [21.0, -1.0],
-         "std": [21.4, -1.0]
-     })
-     )
-    )
+    (test_df, test_df)
 ])
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > (3, 6, 9),
+@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
                     reason="Requires statistics._counts, which is not present in 3.7 or "
                            "higher")
 def test_fill_friends_age(data: pd.DataFrame, expected: pd.DataFrame):
