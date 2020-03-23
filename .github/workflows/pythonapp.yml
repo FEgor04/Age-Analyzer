@@ -24,7 +24,7 @@ jobs:
       - name: Install requirements
         run: pip install -r requirements.txt
       - name: Install coverage
-        - pip install coverage
+        run: pip install coverage
       - name: Run tests
         run: coverage run -m pytest
       - name: Tests report
