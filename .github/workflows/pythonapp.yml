@@ -1,34 +1,29 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+# name: Python application
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+    tags:
+      - '!refs/tags/*'
+    branches:
+      - '*'
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  run-tests:
+    runs-on: [ubuntu-latest]
+    env:
+      vk_api: ${{ secrets.vk_api }}
+      tg_api: ${{ secrets.tg_api }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.6
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.6.9
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Set env variables
-      env:
-          tg_api: ${{ secrets.tg_api }}
-          vk_api: ${{ secrets.vk_api }}
-    - name: Test with pytest
-      run: |
-        python -m pytest --verbose
-
+      - uses: actions/checkout@master
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.6.9
+          architecture: 'x64'
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: coverage run -m pytest
+      - name: Tests report
+        run: coverage repor
