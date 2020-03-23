@@ -1,6 +1,8 @@
 language: python
 python:
-  "3.6.9"
+  - '3.6.9'
+  - '3.6.10'
+  - '3.7'
 install:
   - pip install -r requirements.txt
   - pip install codecov
@@ -8,6 +10,3 @@ script:
   - coverage run -m pytest
 after_success:
   - codecov
-  - curl --ftp-create-dirs
-    -T filename
-    sftp://${SFTP_USER}:${SFTP_PASSWORD}@{VDS_IP}/Age-Analyzer
