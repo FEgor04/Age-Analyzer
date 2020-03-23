@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import collections
 import datetime
 import statistics
 
@@ -9,13 +9,27 @@ from dateutil.relativedelta import relativedelta
 import settings
 
 
+def _counts(data):
+    # Generate a table of sorted (value, frequency) pairs.
+    table = collections.Counter(iter(data)).most_common()
+    if not table:
+        return table
+    # Extract the values with the highest frequency.
+    maxfreq = table[0][1]
+    for i in range(1, len(table)):
+        if table[i][1] != maxfreq:
+            table = table[:i]
+            break
+    return table
+
+
 def find_max_mode(list1):
     """
 
     :param list1: list, mode of each you want to get
     :return max_mode. If there are many modes, it will return maximal of them
     """
-    list_table = statistics._counts(list1)
+    list_table = _counts(list1)
     len_table = len(list_table)
 
     if len_table == 1:
@@ -34,7 +48,7 @@ def find_average_mode(arr):
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
-    list_table = statistics._counts(arr)
+    list_table = _counts(arr)
     len_table = len(list_table)
     new_list = []
     for i in range(len_table):

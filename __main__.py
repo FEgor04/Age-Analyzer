@@ -7,6 +7,7 @@ import csv_connect
 import neuroanalyzer
 import settings
 import tg as telegram_bot
+from age_analyzer import _counts
 
 
 def find_average_mode(arr):
@@ -15,7 +16,7 @@ def find_average_mode(arr):
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
-    list_table = st._counts(arr)
+    list_table = _counts(arr)
     len_table = len(list_table)
     new_list = []
     for i in range(len_table):
