@@ -23,11 +23,10 @@ def _counts(data):
     return table
 
 
-def find_max_mode(list1):
-    """
-
+def find_max_mode(list1) -> float:
+    """Return mode in list1, if there are many modes, it will return the biggest
     :param list1: list, mode of each you want to get
-    :return max_mode. If there are many modes, it will return maximal of them
+    :return
     """
     list_table = _counts(list1)
     len_table = len(list_table)
@@ -42,11 +41,11 @@ def find_max_mode(list1):
     return max_mode
 
 
-def find_average_mode(arr):
-    """
+def find_average_mode(arr) -> float:
+    """Return mode of arr. If there are many modes, it will return mean of them
 
     :param arr: list, mode of each you want to get
-    :return mode. If there are many modes, it will return average of them
+    :return int
     """
     list_table = _counts(arr)
     len_table = len(list_table)
@@ -56,9 +55,8 @@ def find_average_mode(arr):
     return int(statistics.mean(new_list))
 
 
-def is_profile_closed(target):
-    """
-
+def is_profile_closed(target) -> bool:
+    """Returns True if target's profile is closed, and False if it is open
     :param target: VK id
     :return True if profile is closed. False if it is not
     """
@@ -77,9 +75,8 @@ def is_profile_closed(target):
     return data['is_closed']
 
 
-def get_bdate(target):
-    """
-
+def get_bdate(target: str) -> str:
+    """Return target's birth date
     :param target: VK id
     :return target's birth date
     """
@@ -96,9 +93,8 @@ def get_bdate(target):
         return -1
 
 
-def get_name(target):
-    """
-
+def get_name(target: str) -> dict:
+    """Returns target's name and some other thing like last_name, vk_id and etc.
     :param target: VK id
     :return target's name
     """
@@ -111,15 +107,14 @@ def get_name(target):
     })
     try:
         return r.json()['response'][0]
-    except:
+    except KeyError:
         return -1
 
 
 def get_id_by_domain(target):
-    """
-
+    """Get target's id by domain (short link)
     :param target: VK domain
-    :return target's ID by his domain
+    :return target's ID
     """
     r = requests.get("https://api.vk.com/method/users.get", params={
         "v": settings.version,
@@ -135,8 +130,7 @@ def get_id_by_domain(target):
 
 
 def get_friends(target, count=10000):
-    """
-
+    """Get target's dict friends or -1 if profile is closed.
     :param target: VK id
     :param count: count of friends you want to get
     :return: dict with target's friends
@@ -160,10 +154,9 @@ def get_friends(target, count=10000):
 
 
 def get_age(target):
-    """
-
+    """Get target's age
     :param target: VK id
-    :return target's age by his VK id
+    :return target's age
     """
     birth_date_str = get_bdate(target)
     age = get_age_by_bdate(birth_date_str)
@@ -171,10 +164,9 @@ def get_age(target):
 
 
 def get_friends_ages(target):
-    """
-
+    """Get target's friends' ages
     :param target: VK id
-    :return friend's ages
+    :return List with ages or -1 if profile is closed
     """
     friends_bdate = get_friends_bdate(target)
     ages = []
@@ -192,9 +184,9 @@ def get_friends_ages(target):
 
 
 def get_friends_bdate(target):
-    """
-    :param target: friends' birth dates
-    :return:
+    """Get target's friends' birth dates
+    :param target: target
+    :return: list with friends' birth dates or -1 if profile is closed
     """
     target_id = get_id_by_domain(target)
     r = requests.get("https://api.vk.com/method/friends.get", params={
@@ -213,9 +205,8 @@ def get_friends_bdate(target):
 
 
 def get_age_by_bdate(birth_date_str):
-    """
-
-    :param birth_date_str: birth_date (string) it is like DD.MM.YYYY
+    """Get age by birth date. (How many full years passed)
+    :param birth_date_str: birth_date (string) Formatted like DD.MM.YYYY
     :return: age
     """
     today_date = datetime.datetime.today()

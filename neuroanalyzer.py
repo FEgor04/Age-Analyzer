@@ -10,8 +10,7 @@ from age_analyzer import _counts
 
 
 def find_average_mode(arr):
-    """
-    Finds average mode in arr
+    """Return average mode in arr
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
@@ -24,12 +23,10 @@ def find_average_mode(arr):
 
 
 class AgeRegressor:
-    """
-    Class for catboost.CatBoostRegressor
+    """Class for catboost.CatBoostRegressor
     """
     def __init__(self):
-        """
-        Initiate AgeRegressor
+        """Initiate AgeRegressor
         """
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', iterations=1000)
         logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
@@ -37,8 +34,7 @@ class AgeRegressor:
         logging.info("INIT^Model initiated.")
 
     def train_with_raw_data(self, df_raw: pd.DataFrame):
-        """
-
+        """Train catboost.CatBoostRegressor model with raw data
         :param df_raw: df filled with csv_connect.fill_vk_age and csv_connect.fill_friends_age
         :return:
         """
@@ -55,8 +51,7 @@ class AgeRegressor:
         self.save_model(settings.neural_network_file)
 
     def save_model(self, filename):
-        """
-
+        """Save AgeRegressor model
         :param filename: file to save model in
         :return: saves model in filename
         """
@@ -64,19 +59,17 @@ class AgeRegressor:
         logging.info("save_model^Model saved successfully.")
 
     def open_model(self, filename):
-        """
-
+        """Open AgeRegressor model
         :param filename: file to open model from
-        :return: opens model from filename
+        :return:
         """
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE',
                                               iterations=1000)
         self.reg.load_model(filename)
         logging.info(f"open_model^Model loaded successfully. Tree Count: {self.reg.tree_count_}")
 
-    def query(self, ages):
-        """
-        Query to catboost model
+    def query(self, ages) -> float:
+        """Query to catboost model
         :param ages: list with ages
         :return: estimated age by list with ages
         """

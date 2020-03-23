@@ -10,11 +10,11 @@ import tg as telegram_bot
 from age_analyzer import _counts
 
 
-def find_average_mode(arr):
-    """
+def find_average_mode(arr) -> float:
+    """Return mode of arr. If there are many modes, it will return mean of them
 
     :param arr: list, mode of each you want to get
-    :return mode. If there are many modes, it will return average of them
+    :return int
     """
     list_table = _counts(arr)
     len_table = len(list_table)

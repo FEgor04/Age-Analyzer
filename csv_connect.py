@@ -8,8 +8,7 @@ from age_analyzer import _counts
 
 
 def people_with_open_profile(data: pd.DataFrame):
-    """
-    Finds count of people with open profile
+    """Finds number of people with open profile
     :param data: pandas.DataFrame with needed cells
     :return: count of people whose profile is open
     """
@@ -18,8 +17,7 @@ def people_with_open_profile(data: pd.DataFrame):
 
 
 def find_average_mode(arr):
-    """
-    Finds average mode of arr
+    """Finds average mode of arr
     :param arr: list, mode of each you want to get
     :return mode. If there are many modes, it will return average of them
     """
@@ -32,8 +30,7 @@ def find_average_mode(arr):
 
 
 def fill_vk_age(data: pd.DataFrame):
-    """
-    Fills VK Age in output_csv file
+    """Fills VK Age in output_csv file
     :param data:
     """
     for i in range(0, data.__len__()):
@@ -46,10 +43,7 @@ def fill_vk_age(data: pd.DataFrame):
 
 
 def fill_friends_age(data: pd.DataFrame):
-    """
-
-    Function fills friends ages' Mean, Median, etc.
-
+    """Function fills friends ages' Mean, Median, etc.
     :param data: pd.DataFrame, raw data
     """
     for i in range(0, len(data)):
@@ -70,8 +64,7 @@ def fill_friends_age(data: pd.DataFrame):
 
 
 def people_who_specified_age(data: pd.DataFrame):
-    """
-    Finds count of people who specified their age in VK
+    """Finds count of people who specified their age in VK
     :param data: pandas.DataFrame with needed cells
     :return: Count of people who specify their age
     """
@@ -80,8 +73,7 @@ def people_who_specified_age(data: pd.DataFrame):
 
 
 def people_whose_vk_age_is_equal_to_real_age(data: pd.DataFrame):
-    """
-    Find count of people whose real age if equal to VK age
+    """Find count of people whose real age if equal to VK age
     :param data: pandas.DataFrame with needed cells
     :return: Count of people whose VK age is equal to Real Age
     """
