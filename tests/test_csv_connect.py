@@ -76,7 +76,6 @@ def test_fill_friends_age(data: pd.DataFrame, expected: pd.DataFrame):
     """
     Test csv_connect.fill_friends_age function
     """
-    print(data)
     data_filled = csv_connect.fill_friends_age(data)
     assert 1 == 1  # Passed if it completed
 

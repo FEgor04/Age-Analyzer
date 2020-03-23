@@ -2,8 +2,10 @@
 
 import datetime
 import statistics
-from dateutil.relativedelta import relativedelta
+
 import requests
+from dateutil.relativedelta import relativedelta
+
 import settings
 
 
@@ -125,7 +127,6 @@ def get_friends(target, count=10000):
     :param count: count of friends you want to get
     :return: dict with target's friends
     """
-    print(count)
     all_data = []
     target_id = get_id_by_domain(target)
     r = requests.get("https://api.vk.com/method/friends.get", params={
@@ -141,8 +142,6 @@ def get_friends(target, count=10000):
         all_data.extend(data)
     except:
         return -1
-    print(r)
-    print(data)
     return all_data
 
 

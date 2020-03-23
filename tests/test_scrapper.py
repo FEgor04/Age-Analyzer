@@ -142,7 +142,6 @@ def test_get_friends(target, expected):
     if isinstance(friends, int):
         assert friends == expected
     else:
-        print(len(friends))
         assert abs(expected - len(friends)) <= 5
 
 
