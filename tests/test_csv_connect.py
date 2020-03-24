@@ -69,9 +69,6 @@ def test_people_who_specified_age(data: pd.DataFrame, expected: int):
 @pytest.mark.parametrize("data, expected", [
     (test_df, test_df)
 ])
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
-                    reason="Requires statistics._counts, which is not present in 3.7 or "
-                           "higher")
 def test_fill_friends_age(data: pd.DataFrame, expected: pd.DataFrame):
     """
     Test csv_connect.fill_friends_age function
