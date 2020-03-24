@@ -33,9 +33,6 @@ def test_save_model():
     assert 1 == 1, "It should not give any exceptions"  # Passed if there will be no exception, so it is okay
 
 
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
-                    reason="Requires statistics._counts, which is not present in 3.7 or "
-                           "higher")
 def test_query():
     """
     Test neoruanalyzer.query function
@@ -48,9 +45,6 @@ def test_query():
     assert abs(15 - predicted) <= 1, "Should be 15±1"
 
 
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
-                    reason="Requires statistics._counts, which is not present in 3.7 or "
-                           "higher")
 def test_train_with_raw_data():
     """
     Test neuroanalyzer.train_with_raw_data() function
