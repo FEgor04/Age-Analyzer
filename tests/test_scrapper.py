@@ -122,13 +122,13 @@ def test_is_profile_closed(target: str, expected: bool):
     assert expected == pred
 
 
-@pytest.mark.parametrize("target, expected", [
-    ("fegor2004", 74),
-    ("dasdasdaatggrtefsdg", -1),
-    ("a_medvedev_01", 9937)
+@pytest.mark.parametrize("target, expected, eps", [
+    ("fegor2004", 74, 5),
+    ("dasdasdaatggrtefsdg", -1, -1),
+    ("a_medvedev_01", 9937, 100)
 
 ])
-def test_get_friends(target, expected):
+def test_get_friends(target, expected, eps):
     """
     Test age_analyzer.get_friends function
     """
@@ -136,7 +136,7 @@ def test_get_friends(target, expected):
     if isinstance(friends, int):
         assert friends == expected
     else:
-        assert abs(expected - len(friends)) <= 5
+        assert abs(expected - len(friends)) <= eps
 
 
 @pytest.mark.parametrize("target, expected", [
