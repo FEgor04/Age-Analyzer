@@ -88,9 +88,6 @@ def test_get_id_by_domain(target: str, expected: int):
     ([1, 2, 2, 2, 3], 2),
     ([1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4], 3)
 ])
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
-                    reason="Requires statistics._counts, which is not present in 3.7 or "
-                           "higher")
 def test_find_average_mode(array: list, expected: int):
     """
     Test age_analyzer.find_average_mode function
@@ -104,9 +101,6 @@ def test_find_average_mode(array: list, expected: int):
     ([1, 2, 2, 2, 3, 3, 3, 4, 4], 3),  # Test when there is many modes
     ([1], 1)  # Test when there is only one elem
 ])
-@pytest.mark.skipif((sys.version_info.major, sys.version_info.minor, sys.version_info.micro) > min_version,
-                    reason="Requires statistics._counts, which is not present in 3.7 or "
-                           "higher")
 def test_find_max_mode(array: list, expected: int):
     """
     Test age_analyzer.find_average_mode function
