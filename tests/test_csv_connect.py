@@ -1,10 +1,7 @@
-import sys
-
 import pandas as pd
 import pytest
 
 import csv_connect
-from settings import min_version
 
 test_df = pd.DataFrame({
     "ID": ['fegor2004', 'id41417392'],

@@ -1,11 +1,7 @@
-import sys
-
 import pandas as pd
-import pytest
 
 import neuroanalyzer
 import settings
-from settings import min_version
 
 
 def test_init():

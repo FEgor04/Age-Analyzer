@@ -1,9 +1,6 @@
-import sys
-
 import pytest
 
 import age_analyzer
-from settings import min_version
 
 
 @pytest.mark.parametrize("target, expected", [

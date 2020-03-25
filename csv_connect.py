@@ -49,7 +49,6 @@ def fill_friends_age(data: pd.DataFrame):
     for i in range(0, len(data)):
         if analyzer.is_profile_closed(data['ID'][int(i)]):
             print(f"{data['ID'][i]} is closed")
-            pass
         else:
             ages = analyzer.get_friends_ages(data["ID"][i])
             print(f"ID: {data['ID'][i]}. Ages: {ages} ")
