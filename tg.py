@@ -29,13 +29,15 @@ def counts_by_arr(arr: np.ndarray) -> np.ndarray:
     return np.array(answ_arr)
 
 
-def estimate_age_recursive(target):
-    target_friends = age_analyzer.get_friends()
+def estimate_age_recursive(target, model=neural_network):
+    target_friends = age_analyzer.get_friends(target)
+    target_id = age_analyzer.get_id_by_domain(target)
     estimated_ages = []
     for now in target_friends:
         now_ages = age_analyzer.get_friends_ages(now)
-        estimated_ages.append(neural_network.query(now_ages))
-    answer = neural_network.query(estimated_ages)
+        if isinstance(now_ages, list) and now != target_id:
+            estimated_ages.append(model.query(now_ages))
+    answer = model.query(estimated_ages)
     return answer
 
 
