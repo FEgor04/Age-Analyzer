@@ -25,6 +25,7 @@ def find_average_mode(arr):
 class AgeRegressor:
     """Class for catboost.CatBoostRegressor
     """
+
     def __init__(self):
         """Initiate AgeRegressor
         """
@@ -68,9 +69,11 @@ class AgeRegressor:
         self.reg.load_model(filename)
         logging.info(f"open_model^Model loaded successfully. Tree Count: {self.reg.tree_count_}")
 
-    def query(self, ages) -> float:
+    def query(self, ages, save: bool = True, log: bool = True) -> float:
         """Query to catboost model
         :param ages: list with ages
+        :param save: Need to save model or not
+        :param log: Need to log or not
         :return: estimated age by list with ages
         """
         mean = round(st.mean(ages), 2)
@@ -80,8 +83,10 @@ class AgeRegressor:
         std = round(np.array(ages).std(), 2)
         predicted = self.reg.predict([mean, hmean, mode, median, std])
         predicted = round(predicted, 2)
-        logging.info(
-            f"query^Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
-        )
-        self.save_model(filename=settings.neural_network_file)
+        if log:
+            logging.info(
+                f"query^Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
+            )
+        if save:
+            self.save_model(filename=settings.neural_network_file)
         return predicted

@@ -36,14 +36,14 @@ def estimate_age_recursive(target, model=neural_network):
     for now in target_friends:
         now_ages = age_analyzer.get_friends_ages(now)
         if isinstance(now_ages, list) and now != target_id:
-            estimated_ages.append(model.query(now_ages))
+            if len(now_ages) != 0:
+                estimated_ages.append(model.query(now_ages), False, False)
     answer = model.query(estimated_ages)
     return answer
 
 
 def launch():
-    """
-        This function launches bot
+    """This function launches bot
     """
     try:
         neural_network.open_model(settings.neural_network_file)
