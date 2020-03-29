@@ -30,26 +30,30 @@ class AgeRegressor:
         """Initiate AgeRegressor
         """
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', iterations=1000)
-        handler = logging.FileHandler(filename=settings.project_folder + '/log/log.csv', mode='a')
-        logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
-                            level=logging.INFO, handlers=[handler])
-        logging.info("INIT^Model initiated.")
+        if settings.log_needed:
+            handler = logging.FileHandler(filename=settings.project_folder + '/log/log.csv', mode='a')
+            logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
+                                level=logging.INFO, handlers=[handler])
+            logging.info("INIT^Model initiated.")
 
     def train_with_raw_data(self, df_raw: pd.DataFrame):
         """Train catboost.CatBoostRegressor model with raw data
         :param df_raw: df filled with csv_connect.fill_vk_age and csv_connect.fill_friends_age
         :return:
         """
-        logging.info("train_with_raw_data^Started training.")
+        if settings.log_needed:
+            logging.info("train_with_raw_data^Started training.")
         df_raw.fillna(-1.0, inplace=True)
         df_filtered = df_raw[df_raw['Mean'] != -1]
         train_columns = ['Mean', 'Harmonic Mean', 'Mode', 'Median', 'std']
         x_train_df = df_filtered[train_columns]
         y_train_df = df_filtered['Real Age']
-        logging.info("train_with_raw_data^Data collected. Starting training.")
+        if settings.log_needed:
+            logging.info("train_with_raw_data^Data collected. Starting training.")
         self.reg.fit(x_train_df, y_train_df, verbose=False)
-        logging.info(f"train_with_raw_data^Catboost Regressor fitted successfully."
-                     f"Tree Count: {self.reg.tree_count_}. Saving data.")
+        if settings.log_needed:
+            logging.info(f"train_with_raw_data^Catboost Regressor fitted successfully."
+                         f"Tree Count: {self.reg.tree_count_}. Saving data.")
         self.save_model(settings.neural_network_file)
 
     def save_model(self, filename):
@@ -58,7 +62,8 @@ class AgeRegressor:
         :return: saves model in filename
         """
         self.reg.save_model(filename)
-        logging.info("save_model^Model saved successfully.")
+        if settings.log_needed:
+            logging.info("save_model^Model saved successfully.")
 
     def open_model(self, filename):
         """Open AgeRegressor model
@@ -68,7 +73,8 @@ class AgeRegressor:
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE',
                                               iterations=1000)
         self.reg.load_model(filename)
-        logging.info(f"open_model^Model loaded successfully. Tree Count: {self.reg.tree_count_}")
+        if settings.log_needed:
+            logging.info(f"open_model^Model loaded successfully. Tree Count: {self.reg.tree_count_}")
 
     def query(self, ages, save: bool = True, log: bool = True) -> float:
         """Query to catboost model
@@ -84,7 +90,7 @@ class AgeRegressor:
         std = round(np.array(ages).std(), 2)
         predicted = self.reg.predict([mean, hmean, mode, median, std])
         predicted = round(predicted, 2)
-        if log:
+        if log and settings.log_needed:
             logging.info(
                 f"query^Predicted successfully. Mean: {mean}. HMean: {hmean}. Mode: {mode}. Median: {median}. Std: {std}. Result: {predicted}."
             )
