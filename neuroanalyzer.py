@@ -30,8 +30,9 @@ class AgeRegressor:
         """Initiate AgeRegressor
         """
         self.reg = catboost.CatBoostRegressor(learning_rate=0.5, depth=2, loss_function='RMSE', iterations=1000)
+        handler = logging.FileHandler(filename=settings.project_folder + '/log/log.csv', mode='a')
         logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
-                            level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
+                            level=logging.INFO, handlers=[handler])
         logging.info("INIT^Model initiated.")
 
     def train_with_raw_data(self, df_raw: pd.DataFrame):

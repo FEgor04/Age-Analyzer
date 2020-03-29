@@ -51,8 +51,9 @@ def launch():
         neural_network.open_model(settings.neural_network_file)
     except:
         neural_network.train_with_raw_data(pd.read_csv(settings.project_folder + '/' + settings.csv_file))
+    handler = logging.FileHandler(filename=settings.project_folder + '/log/log.csv', mode='a')
     logging.basicConfig(format='%(asctime)s^%(name)s^%(levelname)s^%(message)s',
-                        level=logging.INFO, filename=settings.project_folder + '/' + 'log/log.csv')
+                        level=logging.INFO, handlers=[handler])
     logging.info("launch^Bot launched.")
     bot.polling()
 

@@ -12,7 +12,6 @@ import tg as telegram_bot
 def test_estimate_age_recursive(target, expected, deviation):
     """Test tg.estimate_age_recursive function
     :param target: Target, whom to analyze
-    :param model: neuroanalyzer.AgeRegressor() model
     :param expected: expected answer
     :param deviation: Allowed deviation |expected-answer| <= deviation
     :return: Asserts True if it was correct
