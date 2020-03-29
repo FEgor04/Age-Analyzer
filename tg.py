@@ -33,11 +33,13 @@ def estimate_age_recursive(target, model=neural_network):
     target_friends = age_analyzer.get_friends(target)
     target_id = age_analyzer.get_id_by_domain(target)
     estimated_ages = []
+    if isinstance(target_friends, int):
+        return -1  # Profile closed
     for now in target_friends:
         now_ages = age_analyzer.get_friends_ages(now)
         if isinstance(now_ages, list) and now != target_id:
             if len(now_ages) != 0:
-                estimated_ages.append(model.query(now_ages), False, False)
+                estimated_ages.append(model.query(now_ages, False, False))
     answer = model.query(estimated_ages)
     return answer
 
