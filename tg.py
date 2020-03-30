@@ -49,7 +49,7 @@ def launch():
     """
     try:
         neural_network.open_model(settings.neural_network_file)
-    except:
+    except neuroanalyzer:
         neural_network.train_with_raw_data(pd.read_csv(settings.project_folder + '/' + settings.csv_file))
     if settings.log_needed:
         handler = logging.FileHandler(filename=settings.project_folder + '/log/log.csv', mode='a')
@@ -64,7 +64,7 @@ def analyze_recursive(message):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
-    except:
+    except IndexError:
         if settings.log_needed:
             logging.info(f"recursive_response^Wrong format. Requested by {by}")
             logging.error(f"recursive_error")
@@ -92,31 +92,35 @@ def analyze_recursive(message):
                    f"Возраст, указанный в профиле - {target_age}.\n" \
                    f"Однако, оценив возраст рекурсивно, мы полагаем, что настоящий возраст: {predicted_recursive} \n" \
                    f"При стандартном способе оценки: {predicted}"
-        bot.send_message(message.chat.id, response)
         if settings.log_needed:
             logging.info(f"analyze_response^Answered to {by}. Request: {message.chat.id}")
+        return bot.send_message(message.chat.id, response)
 
 
 @bot.message_handler(commands=['analyze'])
-def analyze(message):
+def analyze(message, launched_by_test=False, model=neural_network):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
-    except:
+    except IndexError:
         if settings.log_needed:
             logging.info(f"analyze_response^Wrong format. Requested by {by}")
-        bot.send_message(message.chat.id, "Введите по формату\n"
-                                          "/analyze {id}")
-        return
+        if not launched_by_test:
+            bot.send_message(message.chat.id, "Введите по формату\n"
+                                              "/analyze {id}")
+        return 3
     if settings.log_needed:
         logging.info(f"analyze_request^{by} wants to analyze {target}".encode("ascii", errors='xmlcharrefreplace'))
     ages = age_analyzer.get_friends_ages(target)
     if age_analyzer.is_profile_closed(target) or ages == "PC":
         if settings.log_needed:
             logging.info(f"analyze_response^{target} - no profile. Requested by {by}")
-        bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
+        if not launched_by_test:
+            bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
+        return 2
     else:
-        bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
+        if not launched_by_test:
+            bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
         if settings.log_needed:
             logging.info(f"analyze_analyzing^Started analyze {target}. Requested by {by}.")
         target_name = age_analyzer.get_name(target)
@@ -124,16 +128,18 @@ def analyze(message):
         if target_age == -1:
             target_age = "не указан"
         friends_ages = age_analyzer.get_friends_ages(target)
-        predicted = (neural_network.query(friends_ages))
+        predicted = (model.query(friends_ages))
         mode = find_max_mode(friends_ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \
                    f"Однако, мы полагаем, что настоящий возраст: {predicted} \n" \
                    f"Мода: {mode}"
 
-        bot.send_message(message.chat.id, response)
         if settings.log_needed:
             logging.info(f"analyze_response^Answered to {by}. Request: {message.chat.id}")
+        if not launched_by_test:
+            bot.send_message(message.chat.id, response)
+        return 1
 
 
 @bot.message_handler(commands=["histogram"])
@@ -141,7 +147,7 @@ def build_histogram(message):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
-    except:
+    except IndexError:
         if settings.log_needed:
             logging.info(f"histogram_response^Wrong format. Requested by {by}")
         bot.send_message(message.chat.id, "Введите по формату\n"
