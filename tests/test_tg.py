@@ -45,8 +45,7 @@ def test_estimate_age_recursive(target, expected, deviation):
 def test_analyze(message):
     model = neuroanalyzer.AgeRegressor()
     model.open_model('neuronet.sav')
-    print(message.chat.id)
-    assert telegram_bot.analyze(message, launched_by_test=True, model=model) == message.chat.id
+    assert telegram_bot.analyze(message, True, model) == message.chat.id
 
 
 @pytest.mark.parametrize("message", [
@@ -55,7 +54,7 @@ def test_analyze(message):
     Message("Wrong", "Format", 3, "/analyze")
 ])
 def test_build_histogram(message):
-    assert True
+    assert telegram_bot.build_histogram(message, True) == message.chat.id
 
 
 @pytest.mark.parametrize("message", [
@@ -64,4 +63,6 @@ def test_build_histogram(message):
     Message("Wrong", "Format", 3, "/analyze")
 ])
 def test_analyze_recursive(message):
-    assert True
+    model = neuroanalyzer.AgeRegressor()
+    model.open_model('neuronet.sav')
+    assert telegram_bot.analyze_recursive(message, True, model) == message.chat.id

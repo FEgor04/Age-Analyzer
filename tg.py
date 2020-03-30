@@ -60,7 +60,7 @@ def launch():
 
 
 @bot.message_handler(commands=['recursive'])
-def analyze_recursive(message):
+def analyze_recursive(message, launched_by_tests=False, model=neural_network):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
@@ -68,44 +68,50 @@ def analyze_recursive(message):
         if settings.log_needed:
             logging.info(f"recursive_response^Wrong format. Requested by {by}")
             logging.error(f"recursive_error")
-        bot.send_message(message.chat.id, "Введите по формату\n"
-                                          "/analyze {id}")
-        return
+        if not launched_by_tests:
+            bot.send_message(message.chat.id, "Введите по формату\n"
+                                              "/analyze {id}")
+        return 3
     if settings.log_needed:
         logging.info(f"recursive_request^{by} wants to analyze {target}".encode("ascii", errors='xmlcharrefreplace'))
     ages = age_analyzer.get_friends_ages(target)
     if age_analyzer.is_profile_closed(target) or ages == "PC":
         if settings.log_needed:
             logging.info(f"recursive_response^{target} - no profile. Requested by {by}")
-        bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
+        if not launched_by_tests:
+            bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
+        return 2
     else:
-        bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
+        if not launched_by_tests:
+            bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
         if settings.log_needed:
             logging.info(f"recursive_analyzing^Started analyze {target}. Requested by {by}.")
         target_name = age_analyzer.get_name(target)
         target_age = age_analyzer.get_age(target)
         if target_age == -1:
             target_age = "не указан"
-        predicted_recursive = estimate_age_recursive(target)
-        predicted = neural_network.query(ages)
+        predicted_recursive = estimate_age_recursive(target, model=model)
+        predicted = model.query(ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \
                    f"Однако, оценив возраст рекурсивно, мы полагаем, что настоящий возраст: {predicted_recursive} \n" \
                    f"При стандартном способе оценки: {predicted}"
         if settings.log_needed:
             logging.info(f"analyze_response^Answered to {by}. Request: {message.chat.id}")
-        return bot.send_message(message.chat.id, response)
+        if not launched_by_tests:
+            bot.send_message(message.chat.id, response)
+        return 1
 
 
 @bot.message_handler(commands=['analyze'])
-def analyze(message, launched_by_test=False, model=neural_network):
+def analyze(message, launched_by_tests=False, model=neural_network):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
     except IndexError:
         if settings.log_needed:
             logging.info(f"analyze_response^Wrong format. Requested by {by}")
-        if not launched_by_test:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, "Введите по формату\n"
                                               "/analyze {id}")
         return 3
@@ -115,11 +121,11 @@ def analyze(message, launched_by_test=False, model=neural_network):
     if age_analyzer.is_profile_closed(target) or ages == "PC":
         if settings.log_needed:
             logging.info(f"analyze_response^{target} - no profile. Requested by {by}")
-        if not launched_by_test:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
         return 2
     else:
-        if not launched_by_test:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
         if settings.log_needed:
             logging.info(f"analyze_analyzing^Started analyze {target}. Requested by {by}.")
@@ -137,31 +143,36 @@ def analyze(message, launched_by_test=False, model=neural_network):
 
         if settings.log_needed:
             logging.info(f"analyze_response^Answered to {by}. Request: {message.chat.id}")
-        if not launched_by_test:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, response)
         return 1
 
 
 @bot.message_handler(commands=["histogram"])
-def build_histogram(message):
+def build_histogram(message, launched_by_testss=False):
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
     except IndexError:
         if settings.log_needed:
             logging.info(f"histogram_response^Wrong format. Requested by {by}")
-        bot.send_message(message.chat.id, "Введите по формату\n"
-                                          "/histogram {id}")
-        return
+        if not launched_by_testss:
+            bot.send_message(message.chat.id, "Введите по формату\n"
+                                              "/histogram {id}")
+
+        return 3
     if settings.log_needed:
         logging.info(f"histogram_request^{by} wants to build histogram {target}")
     ages = age_analyzer.get_friends_ages(target)
     if age_analyzer.is_profile_closed(target) or ages == "PC":
         if settings.log_needed:
             logging.info(f"histogram_response^{target} - no profile. Requested by {by}")
-        bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
+        if not launched_by_testss:
+            bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
+        return 2
     else:
-        bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
+        if not launched_by_testss:
+            bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
         if settings.log_needed:
             logging.info(f"histogram_start^Started analyze {target} to build histogram. Requested by {by}")
         target_name = age_analyzer.get_name(target)
@@ -177,15 +188,18 @@ def build_histogram(message):
         plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
         plt.ylabel("Count", fontsize=16)
         plt.xlabel("Age", fontsize=16)
-        plt.savefig(f"{settings.project_folder}/graph/{target}.png")
+        if not launched_by_testss:
+            plt.savefig(f"{settings.project_folder}/graph/{target}.png")
         if settings.log_needed:
             logging.info(
                 f"histogram_response^Histogram saved to {settings.project_folder}/graph/{target}.png. Sending it back.")
-        photo = open(f"{settings.project_folder}/graph/{target}.png", 'rb')
-        bot.send_message(message.chat.id,
-                         f"Мы построили гистограмму возрастов друзей"
-                         f" пользователя {target_name['first_name']} {target_name['last_name']}.")
-        bot.send_chat_action(message.chat.id, 'upload_photo')
-        bot.send_photo(message.chat.id, photo)
+        if not launched_by_testss:
+            photo = open(f"{settings.project_folder}/graph/{target}.png", 'rb')
+            bot.send_message(message.chat.id,
+                             f"Мы построили гистограмму возрастов друзей"
+                             f" пользователя {target_name['first_name']} {target_name['last_name']}.")
+            bot.send_chat_action(message.chat.id, 'upload_photo')
+            bot.send_photo(message.chat.id, photo)
+            photo.close()
         plt.close()
-        photo.close()
+        return 1
