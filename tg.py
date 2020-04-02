@@ -29,7 +29,12 @@ def counts_by_arr(arr: np.ndarray) -> np.ndarray:
     return np.array(answ_arr)
 
 
-def estimate_age_recursive(target, model=neural_network):
+def estimate_age_recursive(target, model: AgeRegressor = neural_network) -> float:
+    """Estimate target's age with recursive algorithm.
+    :param target: Whom to analyze
+    :param model: AgeRegressor model
+    :return: Estimated age
+    """
     target_friends = age_analyzer.get_friends(target)
     target_id = age_analyzer.get_id_by_domain(target)
     estimated_ages = []
@@ -61,6 +66,13 @@ def launch():
 
 @bot.message_handler(commands=['recursive'])
 def analyze_recursive(message, launched_by_tests=False, model=neural_network):
+    """
+    Answer to user on /recursive command
+    :param message: Message by decorator
+    :param launched_by_tests: Is it launched by tests
+    :param model: AgeRegressor model
+    :return: Code 1 if everything was ok, Code 2 if profile was closed/not exists, Code 3 - wrong format
+    """
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
@@ -105,6 +117,13 @@ def analyze_recursive(message, launched_by_tests=False, model=neural_network):
 
 @bot.message_handler(commands=['analyze'])
 def analyze(message, launched_by_tests=False, model=neural_network):
+    """
+    Answer to user on /analyze
+    :param message: Message by decorator
+    :param launched_by_tests: Is it launched by tests
+    :param model: AgeRegressor model
+    :return: Code 1 if everything was ok, Code 2 if profile was closed/not exists, Code 3 - wrong format
+    """
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
@@ -149,14 +168,20 @@ def analyze(message, launched_by_tests=False, model=neural_network):
 
 
 @bot.message_handler(commands=["histogram"])
-def build_histogram(message, launched_by_testss=False):
+def build_histogram(message, launched_by_tests=False):
+    """
+    Answer to user on /histogram command
+    :param message: Message by decorator
+    :param launched_by_tests: Is it launched by tests
+    :return: Code 1 if everything was ok, Code 2 if profile was closed/not exists, Code 3 - wrong format
+    """
     by = f"{message.chat.first_name} {message.chat.last_name} ({message.chat.id})"
     try:
         target = (message.text.split(' '))[1]
     except IndexError:
         if settings.log_needed:
             logging.info(f"histogram_response^Wrong format. Requested by {by}")
-        if not launched_by_testss:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, "Введите по формату\n"
                                               "/histogram {id}")
 
@@ -167,11 +192,11 @@ def build_histogram(message, launched_by_testss=False):
     if age_analyzer.is_profile_closed(target) or ages == "PC":
         if settings.log_needed:
             logging.info(f"histogram_response^{target} - no profile. Requested by {by}")
-        if not launched_by_testss:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, "Страница закрыта или не существует. Попробуйте еще раз.")
         return 2
     else:
-        if not launched_by_testss:
+        if not launched_by_tests:
             bot.send_message(message.chat.id, f"Мы начали анализировать {target}")
         if settings.log_needed:
             logging.info(f"histogram_start^Started analyze {target} to build histogram. Requested by {by}")
@@ -188,12 +213,12 @@ def build_histogram(message, launched_by_testss=False):
         plt.title(f"{target_name['first_name']} {target_name['last_name']}", fontsize=24)
         plt.ylabel("Count", fontsize=16)
         plt.xlabel("Age", fontsize=16)
-        if not launched_by_testss:
+        if not launched_by_tests:
             plt.savefig(f"{settings.project_folder}/graph/{target}.png")
         if settings.log_needed:
             logging.info(
                 f"histogram_response^Histogram saved to {settings.project_folder}/graph/{target}.png. Sending it back.")
-        if not launched_by_testss:
+        if not launched_by_tests:
             photo = open(f"{settings.project_folder}/graph/{target}.png", 'rb')
             bot.send_message(message.chat.id,
                              f"Мы построили гистограмму возрастов друзей"
