@@ -5,17 +5,11 @@
 [![Code Inspector Badg](https://www.code-inspector.com/project/3663/score/svg)]()
 ## Install
 
-At first, make sure you have this libraries:
-  1. requests 
-  2. numpy
-  3. pandas
-  4. sklearn
-  5. matplotlib
-  6. pyTelegramBotAPI
+At first, make sure you have installed requirements.
   
 And, if they are not, install them with this command:
 ```shell script
-pip3 install requests numpy pandas sklearn matplotlib pyTelegramBotAPI
+pip install -r requirements.txt
 ```
 Finally, you need to set **vk_api** and **tg_api** environment variables.
 ## How to analyze someone's age 
