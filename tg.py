@@ -7,6 +7,7 @@ import telebot
 
 import age_analyzer
 import neuroanalyzer
+import recursive_estimate
 import settings
 from age_analyzer import find_max_mode
 from neuroanalyzer import AgeRegressor
@@ -27,26 +28,6 @@ def counts_by_arr(arr: np.ndarray) -> np.ndarray:
     for i in arr:
         answ_arr[i] += 1
     return np.array(answ_arr)
-
-
-def estimate_age_recursive(target, model: AgeRegressor = neural_network) -> float:
-    """Estimate target's age with recursive algorithm.
-    :param target: Whom to analyze
-    :param model: AgeRegressor model
-    :return: Estimated age
-    """
-    target_friends = age_analyzer.get_friends(target)
-    target_id = age_analyzer.get_id_by_domain(target)
-    estimated_ages = []
-    if isinstance(target_friends, int):
-        return -1  # Profile closed
-    for now in target_friends:
-        now_ages = age_analyzer.get_friends_ages(now)
-        if isinstance(now_ages, list) and now != target_id:
-            if len(now_ages) != 0:
-                estimated_ages.append(model.query(now_ages, False, False))
-    answer = model.query(estimated_ages)
-    return answer
 
 
 def launch():
@@ -102,7 +83,7 @@ def analyze_recursive(message, launched_by_tests=False, model=neural_network):
         target_age = age_analyzer.get_age(target)
         if target_age == -1:
             target_age = "не указан"
-        predicted_recursive = estimate_age_recursive(target, model=model)
+        predicted_recursive = recursive_estimate.estimate_age_recursive(target, model=model)
         predicted = model.query(ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \

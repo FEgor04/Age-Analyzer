@@ -125,7 +125,7 @@ def get_id_by_domain(target):
     })
     try:
         return r.json()['response'][0]['id']
-    except:
+    except KeyError:
         pass
 
 
@@ -180,6 +180,7 @@ def get_friends_ages(target):
             pass
         if age != -1:
             ages.append(age)
+    print(ages)
     return ages
 
 
@@ -193,9 +194,7 @@ def get_friends_bdate(target):
         "v": settings.version,
         "access_token": settings.token,
         "user_id": target_id,
-        "order": "name",
         "fields": "bdate",
-        "name_case": "nom",
         "count": 10000
     })
     try:
