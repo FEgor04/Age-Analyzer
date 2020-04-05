@@ -180,7 +180,6 @@ def get_friends_ages(target):
             pass
         if age != -1:
             ages.append(age)
-    print(ages)
     return ages
 
 
