@@ -217,6 +217,9 @@ def get_age_by_bdate(birth_date_str):
     birth_day = int(birth_date_str_list[0])
     birth_month = int(birth_date_str_list[1])
     birth_year = int(birth_date_str_list[2])
-    birth_date = datetime.date(birth_year, birth_month, birth_day)
+    try:
+        birth_date = datetime.date(birth_year, birth_month, birth_day)
+    except ValueError:
+        return -1
     age = relativedelta(today_date, birth_date)
     return age.years
