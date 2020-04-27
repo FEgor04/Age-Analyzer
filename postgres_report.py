@@ -24,6 +24,7 @@ def create_table():
         FIRST_NAME varchar(250), \
         LAST_NAME varchar(250), \
         ESTIMATED_AGE real, \
+        REAL_AGE real, \
         MEAN real, \
         MODE real, \
         HARMONIC_MEAN real, \
@@ -31,24 +32,31 @@ def create_table():
         STD real, \
         FRIENDS_CNT integer, \
         VERIFIED bool, \
-        LAST_CHECK timestamp \
+        LAST_CHECK date \
     )')
     connection.commit()
     connection.close()
 
 
+def check_was_analyzed(domain):
+    connection = psycopg2.connect(
+        database=settings.db_name,
+        user=settings.db_login,
+        password=settings.db_pass,
+        host=settings.db_ip,
+        port=settings.db_port
+    )
+    cur = connection.cursor()
+
+
 def analyze_and_insert(domain, model):
-    try:
-        connection = psycopg2.connect(
-            database=settings.db_name,
-            user=settings.db_login,
-            password=settings.db_pass,
-            host=settings.db_ip,
-            port=settings.db_port
-        )
-    except:
-        print("I am unable to connect to the database")
-    # print(connection)
+    connection = psycopg2.connect(
+        database=settings.db_name,
+        user=settings.db_login,
+        password=settings.db_pass,
+        host=settings.db_ip,
+        port=settings.db_port
+    )
     ages = age_analyzer.get_friends_ages(domain)
     estimated_age = model.query(ages)
     target_id = age_analyzer.get_id_by_domain(domain)
@@ -61,16 +69,18 @@ def analyze_and_insert(domain, model):
     friends_cnt = len(ages)
     today = datetime.datetime.now()
     # TODO: update if there are already some info about ID
-    cur = connection.cursor()
     # print(cur)
     # print(name)
+    today_str = today.strftime("%Y-%m-%d")
+    print(today_str)
     query = (f"insert into analyzed("
              f"id, domain, first_name, last_name, estimated_age, mean, mode, harmonic_mean,"
-             f"median, std, friends_cnt, verified) values ("
-             f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {int(estimated_age)}, {mean}, {mode}, {hmean}, {median},"
-             f"{std}, {friends_cnt}, {False}"
+             f"median, std, friends_cnt, verified, last_check) values ("
+             f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {estimated_age}, {mean}, {mode}, {hmean}, {median},"
+             f"{std}, {friends_cnt}, {False}, \'{today_str}\'"
              f")")
     print(query)
+    cur = connection.cursor()
     cur.execute(query)
     connection.commit()
     connection.close()
