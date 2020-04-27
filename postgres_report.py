@@ -47,6 +47,9 @@ def check_was_analyzed(domain):
         port=settings.db_port
     )
     cur = connection.cursor()
+    cur.execute("SELECT count(*) FROM analyzed WHERE domain=\'{domain}\'")
+    records = cur.fetchall()
+    print(records)
 
 
 def analyze_and_insert(domain, model):
@@ -58,7 +61,7 @@ def analyze_and_insert(domain, model):
         port=settings.db_port
     )
     ages = age_analyzer.get_friends_ages(domain)
-    estimated_age = model.query(ages)
+    estimated_age = model._query(ages)
     target_id = age_analyzer.get_id_by_domain(domain)
     name = age_analyzer.get_name(domain)
     mean = round(st.mean(ages), 2)
@@ -84,3 +87,4 @@ def analyze_and_insert(domain, model):
     cur.execute(query)
     connection.commit()
     connection.close()
+    return estimated_age

@@ -25,7 +25,7 @@ def find_average_mode(arr) -> float:
 
 
 if __name__ == "__main__":
-    ANALYZE = False  # Set it by yourself
+    ANALYZE = True  # Set it by yourself
     BOT = False
     FILL_CSV = False
     TRAIN_MODEL = False
@@ -43,21 +43,17 @@ if __name__ == "__main__":
     if ANALYZE:
         print("Input target's ID:", end=" ")
         target = input()
-        model = neuroanalyzer.AgeRegressor()
         # neural_network.train_with_raw_data(df_with_data)
         # File should be formatted like:
         # ID,Real Age,VK Age,Mean,Harmonic Mean,Mode,Median,std'
         # OR:
         # Bot loads neural network from file
+        model = neuroanalyzer.AgeRegressor()
         model.open_model(settings.neural_network_file)
-        ages = age_analyzer.get_friends_ages(target=target)
         name = age_analyzer.get_name(target=target)
-        try:
-            predicted = model.query(ages)
-            answer = f"Neural network thinks that {name['first_name']} {name['last_name']}" \
-                     f"({target}) age is {predicted}"
-        except TypeError:
-            answer = "Profile closed"
+        predicted = model.query(target, False, False)
+        answer = f"Neural network thinks that {name['first_name']} {name['last_name']}" \
+                 f"({target}) age is {predicted}"
         print(answer)
     elif BOT:
         telegram_bot.launch()

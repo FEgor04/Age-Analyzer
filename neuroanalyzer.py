@@ -5,6 +5,7 @@ import catboost
 import numpy as np
 import pandas as pd
 
+import postgres_report
 import settings
 from age_analyzer import _counts
 
@@ -20,6 +21,15 @@ def find_average_mode(arr):
     for i in range(len_table):
         new_list.append(list_table[i][0])
     return int(st.mean(new_list))
+
+
+def find_std(arr):
+    """Return std in arr
+    :param arr: array
+    :return std
+    """
+    std = np.array(arr).std()
+    return std
 
 
 class AgeRegressor:
@@ -76,7 +86,7 @@ class AgeRegressor:
         if settings.log_needed:
             logging.info(f"open_model^Model loaded successfully. Tree Count: {self.reg.tree_count_}")
 
-    def query(self, ages, save: bool = True, log: bool = True) -> float:
+    def _query(self, ages, save: bool = True, log: bool = True) -> float:
         """Query to catboost model
         :param ages: list with ages
         :param save: Need to save model or not
@@ -97,3 +107,7 @@ class AgeRegressor:
         if save:
             self.save_model(filename=settings.neural_network_file)
         return predicted
+
+    def query(self, domain, save=True, log=True):
+        # TODO: check is there any fresh data
+        return postgres_report.analyze_and_insert(domain, self)
