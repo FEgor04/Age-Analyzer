@@ -84,7 +84,7 @@ def analyze_recursive(message, launched_by_tests=False, model=neural_network):
         if target_age == -1:
             target_age = "не указан"
         predicted_recursive = recursive_estimate.estimate_age_recursive(target, model=model)
-        predicted = model.query(ages)
+        predicted = model._query(ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \
                    f"Однако, оценив возраст рекурсивно, мы полагаем, что настоящий возраст: {predicted_recursive} \n" \
@@ -134,7 +134,7 @@ def analyze(message, launched_by_tests=False, model=neural_network):
         if target_age == -1:
             target_age = "не указан"
         friends_ages = age_analyzer.get_friends_ages(target)
-        predicted = (model.query(friends_ages))
+        predicted = (model.query(target))
         mode = find_max_mode(friends_ages)
         response = f"Мы проанализировали {target_name['first_name']} {target_name['last_name']}\n" \
                    f"Возраст, указанный в профиле - {target_age}.\n" \
