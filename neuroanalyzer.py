@@ -109,5 +109,4 @@ class AgeRegressor:
         return predicted
 
     def query(self, domain, save=True, log=True):
-        # TODO: check is there any fresh data
         return postgres_report.analyze_and_insert(domain, self)
