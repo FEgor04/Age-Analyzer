@@ -21,6 +21,7 @@ def recursive_function(friends: list, count: int, number: int, model: AgeRegress
         if person != target_id:
             person_ages = age_analyzer.get_friends_ages(person)
             if isinstance(person_ages, list) and len(person_ages) != 0:
+                # TODO: get data from db and fill it if needed
                 estimated_ages.append(model.query(person_ages, False, False))
     return estimated_ages
 

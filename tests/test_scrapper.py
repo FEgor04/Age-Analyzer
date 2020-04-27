@@ -96,7 +96,8 @@ def test_find_average_mode(array: list, expected: int):
 @pytest.mark.parametrize("array, expected", [
     ([1, 2, 2, 2, 3, 3, 3, 3], 3),  # Test when there is only one mode
     ([1, 2, 2, 2, 3, 3, 3, 4, 4], 3),  # Test when there is many modes
-    ([1], 1)  # Test when there is only one elem
+    ([1], 1),  # Test when there is only one elem
+    ([], 0)
 ])
 def test_find_max_mode(array: list, expected: int):
     """

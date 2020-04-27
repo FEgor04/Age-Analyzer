@@ -46,10 +46,30 @@ def check_was_analyzed(domain):
         host=settings.db_ip,
         port=settings.db_port
     )
+    today = datetime.datetime.now()
     cur = connection.cursor()
-    cur.execute("SELECT count(*) FROM analyzed WHERE domain=\'{domain}\'")
+    cur.execute(
+        f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\' AND last_check-\'{today.strftime('%Y-%m-%d')}\'<=1")
     records = cur.fetchall()
-    print(records)
+    connection.commit()
+    connection.close()
+    return records[0][0]
+
+
+def get_age_from_database(domain):
+    connection = psycopg2.connect(
+        database=settings.db_name,
+        user=settings.db_login,
+        password=settings.db_pass,
+        host=settings.db_ip,
+        port=settings.db_port
+    )
+    cur = connection.cursor()
+    cur.execute(f"SELECT estimated_age FROM analyzed WHERE domain=\'{domain}\'")
+    records = cur.fetchall()
+    connection.commit()
+    connection.close()
+    return records[0][0]
 
 
 def analyze_and_insert(domain, model):
@@ -71,20 +91,18 @@ def analyze_and_insert(domain, model):
     std = round(neuroanalyzer.find_std(ages), 2)
     friends_cnt = len(ages)
     today = datetime.datetime.now()
-    # TODO: update if there are already some info about ID
-    # print(cur)
-    # print(name)
-    today_str = today.strftime("%Y-%m-%d")
-    print(today_str)
-    query = (f"insert into analyzed("
-             f"id, domain, first_name, last_name, estimated_age, mean, mode, harmonic_mean,"
-             f"median, std, friends_cnt, verified, last_check) values ("
-             f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {estimated_age}, {mean}, {mode}, {hmean}, {median},"
-             f"{std}, {friends_cnt}, {False}, \'{today_str}\'"
-             f")")
-    print(query)
-    cur = connection.cursor()
-    cur.execute(query)
-    connection.commit()
-    connection.close()
-    return estimated_age
+    if check_was_analyzed(domain):
+        return get_age_from_database(domain)
+    else:
+        today_str = today.strftime("%Y-%m-%d")
+        query = (f"insert into analyzed("
+                 f"id, domain, first_name, last_name, estimated_age, mean, mode, harmonic_mean,"
+                 f"median, std, friends_cnt, verified, last_check) values ("
+                 f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {estimated_age}, {mean}, {mode}, {hmean}, {median},"
+                 f"{std}, {friends_cnt}, {False}, \'{today_str}\'"
+                 f")")
+        cur = connection.cursor()
+        cur.execute(query)
+        connection.commit()
+        connection.close()
+        return estimated_age
