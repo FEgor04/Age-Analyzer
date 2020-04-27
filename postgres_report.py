@@ -132,7 +132,7 @@ def analyze_and_insert(domain, model, force_upgrade=False):
     )
     if check_was_analyzed(domain):
         return get_age_from_database(domain)
-    elif check_was_analyzed(domain) or force_upgrade:
+    elif not check_was_analyzed(domain) or force_upgrade:
         return upgrade(domain, model)
     else:
         ages = age_analyzer.get_friends_ages(domain)
@@ -158,3 +158,21 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         connection.commit()
         connection.close()
         return estimated_age
+
+
+def set_real_age(domain, real_age, verify):
+    model = neuroanalyzer.AgeRegressor()
+    model.open_model('neuronet.sav')
+    analyze_and_insert(domain, model, force_upgrade=True)
+    connection = psycopg2.connect(
+        database=settings.db_name,
+        user=settings.db_login,
+        password=settings.db_pass,
+        host=settings.db_ip,
+        port=settings.db_port
+    )
+    cur = connection.cursor()
+    cur.execute(f"UPDATE analyzed SET real_age = {real_age} WHERE domain = \'{domain}\';"
+                f"UPDATE analyzed SET verified = {verify} WHERE domain = \'{domain}\';")
+    connection.commit()
+    connection.close()

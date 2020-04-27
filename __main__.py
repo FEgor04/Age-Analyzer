@@ -5,6 +5,7 @@ import pandas as pd
 import age_analyzer
 import csv_connect
 import neuroanalyzer
+import postgres_report
 import settings
 import tg as telegram_bot
 from age_analyzer import _counts
@@ -25,10 +26,11 @@ def find_average_mode(arr) -> float:
 
 
 if __name__ == "__main__":
-    ANALYZE = True  # Set it by yourself
+    ANALYZE = False  # Set it by yourself
     BOT = False
     FILL_CSV = False
     TRAIN_MODEL = False
+    FILL_TABLE = True
     if FILL_CSV:
         df = pd.read_csv('age_research.csv')
         df = csv_connect.fill_friends_age(df)
@@ -40,6 +42,17 @@ if __name__ == "__main__":
         model = neuroanalyzer.AgeRegressor()
         model.train_with_raw_data(df)
         model.save_model('neuronet.sav')
+    if FILL_TABLE:
+        df = pd.read_csv('age_research1.csv')
+        model = neuroanalyzer.AgeRegressor()
+        model.open_model('neuronet.sav')
+        for i in range(len(df)):
+            now_target = df['ID'][i]
+            try:
+                model.query(now_target, False, False)
+                postgres_report.set_real_age(now_target, df['Real Age'][i], True)
+            except:
+                pass
     if ANALYZE:
         print("Input target's ID:", end=" ")
         target = input()
