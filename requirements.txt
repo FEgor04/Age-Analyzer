@@ -5,3 +5,4 @@ matplotlib
 pyTelegramBotAPI
 catboost
 pytest
+psycopg2 # For PostgreSQL
