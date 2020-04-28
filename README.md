@@ -20,7 +20,7 @@ Then launch `__main__.py` file with this:
 python __main__.py
 ```
 Script will ask you to input target's ID, and then it will print his age.
-## How to collect data
+## How to collect data from .csv file
 To collect data, you need to create **.csv** file and fill it like that:
 
 | ID        | Real Age | VK Age | Mean | Harmonic Mean | Mode | Median | std |
@@ -29,6 +29,10 @@ To collect data, you need to create **.csv** file and fill it like that:
 
 And so on.. <br>
 Then set `FILL_CSV` variable to **TRUE** and launch script
+
+## How to collect data from PostgreSQL database
+Set ``FILL_TABLE`` variable to **True**
+Then launch `__main__.py` file and wait.
 
 ## How to train model
 To train model, make sure your .csv table is filled. <br>
