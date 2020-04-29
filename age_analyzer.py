@@ -202,6 +202,23 @@ def get_friends_bdate(target):
         return "PC"
 
 
+def get_domain_by_id(target):
+    """Get target's domain by id
+    :param target: target's id
+    :return: target's domain
+    """
+    r = requests.get("https://api.vk.com/method/users.get", params={
+        "v": settings.version,
+        "access_token": settings.token,
+        "fields": "domain",
+        "user_id": target
+    })
+    try:
+        return r.json()['response'][0]['domain']
+    except KeyError:
+        return -1
+
+
 def get_age_by_bdate(birth_date_str):
     """Get age by birth date. (How many full years passed)
     :param birth_date_str: birth_date (string) Formatted like DD.MM.YYYY
