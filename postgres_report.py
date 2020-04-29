@@ -65,8 +65,8 @@ def upgrade(domain, model):
              f"UPDATE analyzed SET std = {std} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET last_check = current_date WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET friends_cnt = {friends_cnt} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET first_name = {name['first_name']} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET last_name = {name['last_name']} WHERE domain=\'{domain}\';"
+             f"UPDATE analyzed SET first_name = \'{name['first_name']}\' WHERE domain=\'{domain}\';"
+             f"UPDATE analyzed SET last_name = \'{name['last_name']}\' WHERE domain=\'{domain}\';"
              )
     cur.execute(query)
     connection.commit()
