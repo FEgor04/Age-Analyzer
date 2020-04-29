@@ -96,6 +96,8 @@ class AgeRegressor:
         :param log: Need to log or not
         :return: estimated age by list with ages
         """
+        if not ages:
+            return -1
         mean = round(st.mean(ages), 2)
         median = round(st.median(ages), 2)
         hmean = round(st.harmonic_mean(ages), 2)

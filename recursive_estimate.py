@@ -19,11 +19,9 @@ def recursive_function(friends: list, count: int, number: int, model: AgeRegress
     estimated_ages = []
     for person in friends_part:
         if person != target_id:
-
-            person_ages = age_analyzer.get_friends_ages(person)
-            if isinstance(person_ages, list) and len(person_ages) != 0:
-                # TODO: get data from db and fill it if needed
-                estimated_ages.append(model.query(person_ages, False, False))
+            estimated_age = model.query(person)
+            if estimated_age != -1:
+                estimated_ages.append(estimated_age)
     return estimated_ages
 
 
@@ -47,4 +45,4 @@ def estimate_age_recursive(target, model: AgeRegressor, threads_cnt=3) -> float:
     for i in range(threads_cnt):
         return_val = threads[i].get()
         estimated_ages.extend(return_val)
-    return model.query(estimated_ages)
+    return model._query(estimated_ages)

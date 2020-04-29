@@ -57,6 +57,7 @@ def upgrade(domain, model):
     mode = round(neuroanalyzer.find_average_mode(ages), 2)
     median = round(st.median(ages), 2)
     std = round(neuroanalyzer.find_std(ages), 2)
+    vk_age = age_analyzer.get_age(target_id)
     friends_cnt = len(ages)
     query = (f"UPDATE analyzed SET estimated_age = {estimated_age} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET mean = {mean} WHERE domain=\'{domain}\';"
@@ -122,13 +123,13 @@ def get_age_from_database(domain):
     records = cur.fetchall()
     connection.commit()
     connection.close()
-    if records == []:
+    if not records:
         return 0
     else:
         return records[0][0]
 
 
-def analyze_and_insert(domain, model, force_upgrade=False):
+def analyze_and_insert(target, model, force_upgrade=True):
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -136,6 +137,8 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         host=settings.db_ip,
         port=settings.db_port
     )
+    domain = age_analyzer.get_domain_by_id(target)
+    target_id = age_analyzer.get_id_by_domain(target)
     was_analyzed_recently = check_was_analyzed_recently(domain)
     was_analyzed_ever = check_was_analyzed_ever(domain)
     if was_analyzed_recently:
@@ -144,8 +147,9 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         return upgrade(domain, model)
     else:
         ages = age_analyzer.get_friends_ages(domain)
+        if ages == "PC":
+            return -1  # Profile closed
         estimated_age = model._query(ages)
-        target_id = age_analyzer.get_id_by_domain(domain)
         name = age_analyzer.get_name(domain)
         mean = round(st.mean(ages), 2)
         hmean = round(st.harmonic_mean(ages), 2)
@@ -154,11 +158,12 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         std = round(neuroanalyzer.find_std(ages), 2)
         friends_cnt = len(ages)
         today = datetime.datetime.now()
+        vk_age = age_analyzer.get_age(domain)
         query = (f"insert into analyzed("
                  f"id, domain, first_name, last_name, estimated_age, mean, mode, harmonic_mean,"
-                 f"median, std, friends_cnt, verified, last_check) values ("
+                 f"median, std, friends_cnt, verified, last_check, vk_age) values ("
                  f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {estimated_age}, {mean}, {mode}, {hmean}, {median},"
-                 f"{std}, {friends_cnt}, {False}, current_date"
+                 f"{std}, {friends_cnt}, False, current_date, {vk_age}"
                  f")")
         cur = connection.cursor()
         cur.execute(query)
