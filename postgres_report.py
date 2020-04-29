@@ -38,20 +38,6 @@ def create_table():
     connection.close()
 
 
-def check_was_analyzed(domain):
-    connection = psycopg2.connect(
-        database=settings.db_name,
-        user=settings.db_login,
-        password=settings.db_pass,
-        host=settings.db_ip,
-        port=settings.db_port
-    )
-    cur = connection.cursor()
-    cur.execute(f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\'")
-    records = cur.fetchall()
-    return records[0][0]
-
-
 def upgrade(domain, model):
     connection = psycopg2.connect(
         database=settings.db_name,
@@ -71,16 +57,16 @@ def upgrade(domain, model):
     median = round(st.median(ages), 2)
     std = round(neuroanalyzer.find_std(ages), 2)
     friends_cnt = len(ages)
-    today = datetime.datetime.now()
-    today_str = today.strftime("%Y-%m-%d")
     query = (f"UPDATE analyzed SET estimated_age = {estimated_age} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET mean = {mean} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET harmonic_mean = {hmean} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET mode = {mode} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET median = {median} WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET std = {std} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET last_check = {today_str} WHERE domain=\'{domain}\';"
+             f"UPDATE analyzed SET last_check = current_date WHERE domain=\'{domain}\';"
              f"UPDATE analyzed SET friends_cnt = {friends_cnt} WHERE domain=\'{domain}\';"
+             f"UPDATE analyzed SET first_name = {name['first_name']} WHERE domain=\'{domain}\';"
+             f"UPDATE analyzed SET last_name = {name['last_name']} WHERE domain=\'{domain}\';"
              )
     cur.execute(query)
     connection.commit()
@@ -88,7 +74,7 @@ def upgrade(domain, model):
     return estimated_age
 
 
-def check_was_analyzed(domain):
+def check_was_analyzed_recently(domain):
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -96,10 +82,9 @@ def check_was_analyzed(domain):
         host=settings.db_ip,
         port=settings.db_port
     )
-    today = datetime.datetime.now()
     cur = connection.cursor()
     cur.execute(
-        f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\' AND last_check-\'{today.strftime('%Y-%m-%d')}\'<=1")
+        f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\' AND abs(last_check-current_date)<=1")
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -119,7 +104,10 @@ def get_age_from_database(domain):
     records = cur.fetchall()
     connection.commit()
     connection.close()
-    return records[0][0]
+    if records == []:
+        return 0
+    else:
+        return records[0][0]
 
 
 def analyze_and_insert(domain, model, force_upgrade=False):
@@ -130,9 +118,9 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         host=settings.db_ip,
         port=settings.db_port
     )
-    if check_was_analyzed(domain):
+    if check_was_analyzed_recently(domain):
         return get_age_from_database(domain)
-    elif not check_was_analyzed(domain) or force_upgrade:
+    elif not check_was_analyzed_recently(domain) or force_upgrade:
         return upgrade(domain, model)
     else:
         ages = age_analyzer.get_friends_ages(domain)
@@ -146,12 +134,11 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         std = round(neuroanalyzer.find_std(ages), 2)
         friends_cnt = len(ages)
         today = datetime.datetime.now()
-        today_str = today.strftime("%Y-%m-%d")
         query = (f"insert into analyzed("
                  f"id, domain, first_name, last_name, estimated_age, mean, mode, harmonic_mean,"
                  f"median, std, friends_cnt, verified, last_check) values ("
                  f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {estimated_age}, {mean}, {mode}, {hmean}, {median},"
-                 f"{std}, {friends_cnt}, {False}, \'{today_str}\'"
+                 f"{std}, {friends_cnt}, {False}, current_date"
                  f")")
         cur = connection.cursor()
         cur.execute(query)
