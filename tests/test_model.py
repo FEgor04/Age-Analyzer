@@ -1,5 +1,3 @@
-import pandas as pd
-
 import neuroanalyzer
 import settings
 
@@ -47,7 +45,6 @@ def test_train_with_raw_data():
     :return:
     """
     reg = neuroanalyzer.AgeRegressor()
-    df_raw = pd.read_csv(settings.project_folder + '/' + 'tests/age_research1.csv')
-    reg.train_with_raw_data(df_raw)
+    reg.train_with_raw_data([], True)
     # Passed if there will be no exception, so it is okay
     assert 1 == 1, "It should not give any exceptions"

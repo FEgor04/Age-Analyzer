@@ -20,20 +20,21 @@ def create_table():
     cur = connection.cursor()
     cur.execute(' \
         CREATE TABLE IF NOT EXISTS analyzed( \
-        ID integer, \
-        DOMAIN varchar(250), \
-        FIRST_NAME varchar(250), \
-        LAST_NAME varchar(250), \
-        ESTIMATED_AGE real, \
-        REAL_AGE real, \
-        MEAN real, \
-        MODE real, \
-        HARMONIC_MEAN real, \
-        MEDIAN real, \
-        STD real, \
-        FRIENDS_CNT integer, \
-        VERIFIED bool, \
-        LAST_CHECK date \
+        id integer, \
+        domain varchar(250), \
+        first_name varchar(250), \
+        last_name varchar(250), \
+        estimated_age real, \
+        real_age real, \
+        mean real, \
+        mode real, \
+        harmonic_mean real, \
+        median real, \
+        std real, \
+        friends_cnt integer, \
+        verified bool, \
+        last_check date, \
+        vk_age integer \
     )')
     connection.commit()
     connection.close()
@@ -129,7 +130,7 @@ def get_age_from_database(domain):
         return records[0][0]
 
 
-def analyze_and_insert(target, model, force_upgrade=True):
+def analyze_and_insert(target, model, force_upgrade=False):
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -147,7 +148,7 @@ def analyze_and_insert(target, model, force_upgrade=True):
         return upgrade(domain, model)
     else:
         ages = age_analyzer.get_friends_ages(domain)
-        if ages == "PC":
+        if ages == "PC" or not ages:
             return -1  # Profile closed
         estimated_age = model._query(ages)
         name = age_analyzer.get_name(domain)

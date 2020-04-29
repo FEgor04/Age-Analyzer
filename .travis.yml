@@ -10,3 +10,9 @@ script:
   - coverage run -m pytest
 after_success:
   - codecov
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database age_analyzer_db;' -U postgres
+  - psql -h localhost -d age_analyzer_db -U postgres -c '' < req.sql
+
