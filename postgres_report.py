@@ -1,6 +1,7 @@
 import datetime
 import statistics as st
 
+import pandas as pd
 import psycopg2
 
 import age_analyzer
@@ -193,4 +194,31 @@ def get_df_to_train():
         port=settings.db_port
     )
     cur = connection.cursor()
-    cur.execute(f"SELECT ")
+    cur.execute(f"SELECT real_age, mean, harmonic_mean, mode, median, std, friends_cnt from analyzed"
+                f" where verified=True and abs(last_check-current_date) <= 1;")
+    records = cur.fetchall()
+    real_age_arr = []
+    mean_arr = []
+    hmean_arr = []
+    mode_arr = []
+    median_arr = []
+    std_arr = []
+    friends_cnt_arr = []
+    for i in records:
+        real_age_arr.append(i[0])
+        mean_arr.append(i[1])
+        hmean_arr.append(i[2])
+        mode_arr.append(i[3])
+        median_arr.append(i[4])
+        std_arr.append((i[5]))
+        friends_cnt_arr.append(i[6])
+    df_raw = pd.DataFrame({
+        "Real Age": real_age_arr,
+        "Mean": mean_arr,
+        "Harmonic Mean": hmean_arr,
+        "Mode": mode_arr,
+        "Median": median_arr,
+        "std": std_arr,
+        "Friends Count": friends_cnt_arr
+    })
+    return df_raw

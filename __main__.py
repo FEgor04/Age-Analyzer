@@ -29,8 +29,9 @@ if __name__ == "__main__":
     ANALYZE = False  # Set it by yourself
     BOT = False
     FILL_CSV = False
-    TRAIN_MODEL = False
-    FILL_TABLE = True
+    TRAIN_MODEL = True
+    TRAIN_MODEL_WITH_TABLE = True
+    FILL_TABLE = False
     if FILL_CSV:
         df = pd.read_csv('age_research.csv')
         df = csv_connect.fill_friends_age(df)
@@ -38,9 +39,12 @@ if __name__ == "__main__":
         df.fillna(-1.0, inplace=True)
         df.to_csv('age_research1.csv', index=False)
     if TRAIN_MODEL:
-        df = pd.read_csv('age_research1.csv')
         model = neuroanalyzer.AgeRegressor()
-        model.train_with_raw_data(df)
+        if not TRAIN_MODEL_WITH_TABLE:
+            df = pd.read_csv('age_research1.csv')
+            model.train_with_raw_data(df, False)
+        else:
+            model.train_with_raw_data([], True)
         model.save_model('neuronet.sav')
     if FILL_TABLE:
         df = pd.read_csv('age_research1.csv')

@@ -46,16 +46,19 @@ class AgeRegressor:
                                 level=logging.INFO, handlers=[handler])
             logging.info("INIT^Model initiated.")
 
-    def train_with_raw_data(self, df_raw: pd.DataFrame):
+    def train_with_raw_data(self, df_raw: pd.DataFrame, from_table=False):
         """Train catboost.CatBoostRegressor model with raw data
         :param df_raw: df filled with csv_connect.fill_vk_age and csv_connect.fill_friends_age
         :return:
         """
+        if from_table:
+            df_raw = postgres_report.get_df_to_train()
         if settings.log_needed:
             logging.info("train_with_raw_data^Started training.")
+        # print(df_raw)
         df_raw.fillna(-1.0, inplace=True)
         df_filtered = df_raw[df_raw['Mean'] != -1]
-        train_columns = ['Mean', 'Harmonic Mean', 'Mode', 'Median', 'std']
+        train_columns = ['Mean', 'Harmonic Mean', 'Mode', 'Median', 'std', 'Friends Count']
         x_train_df = df_filtered[train_columns]
         y_train_df = df_filtered['Real Age']
         if settings.log_needed:
@@ -98,7 +101,8 @@ class AgeRegressor:
         hmean = round(st.harmonic_mean(ages), 2)
         mode = round(find_average_mode(ages), 2)
         std = round(np.array(ages).std(), 2)
-        predicted = self.reg.predict([mean, hmean, mode, median, std])
+        friends_cnt = len(ages)
+        predicted = self.reg.predict([mean, hmean, mode, median, std, friends_cnt])
         predicted = round(predicted, 2)
         if log and settings.log_needed:
             logging.info(
