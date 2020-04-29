@@ -91,6 +91,23 @@ def check_was_analyzed_recently(domain):
     return records[0][0]
 
 
+def check_was_analyzed_ever(domain):
+    connection = psycopg2.connect(
+        database=settings.db_name,
+        user=settings.db_login,
+        password=settings.db_pass,
+        host=settings.db_ip,
+        port=settings.db_port
+    )
+    cur = connection.cursor()
+    cur.execute(
+        f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\'")
+    records = cur.fetchall()
+    connection.commit()
+    connection.close()
+    return records[0][0]
+
+
 def get_age_from_database(domain):
     connection = psycopg2.connect(
         database=settings.db_name,
@@ -118,9 +135,11 @@ def analyze_and_insert(domain, model, force_upgrade=False):
         host=settings.db_ip,
         port=settings.db_port
     )
-    if check_was_analyzed_recently(domain):
+    was_analyzed_recently = check_was_analyzed_recently(domain)
+    was_analyzed_ever = check_was_analyzed_ever(domain)
+    if was_analyzed_recently:
         return get_age_from_database(domain)
-    elif not check_was_analyzed_recently(domain) or force_upgrade:
+    elif was_analyzed_ever and force_upgrade:
         return upgrade(domain, model)
     else:
         ages = age_analyzer.get_friends_ages(domain)
@@ -163,3 +182,15 @@ def set_real_age(domain, real_age, verify):
                 f"UPDATE analyzed SET verified = {verify} WHERE domain = \'{domain}\';")
     connection.commit()
     connection.close()
+
+
+def get_df_to_train():
+    connection = psycopg2.connect(
+        database=settings.db_name,
+        user=settings.db_login,
+        password=settings.db_pass,
+        host=settings.db_ip,
+        port=settings.db_port
+    )
+    cur = connection.cursor()
+    cur.execute(f"SELECT ")
