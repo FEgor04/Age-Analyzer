@@ -20,7 +20,7 @@ def create_table():
     cur = connection.cursor()
     cur.execute(' \
         CREATE TABLE IF NOT EXISTS analyzed( \
-        id integer, \
+        id integer not null unique, \
         domain varchar(250), \
         first_name varchar(250), \
         last_name varchar(250), \
@@ -41,6 +41,8 @@ def create_table():
 
 
 def upgrade(domain, model):
+    target_id = age_analyzer.get_id_by_domain(domain)
+    domain = age_analyzer.get_domain_by_id(target_id)
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -49,10 +51,9 @@ def upgrade(domain, model):
         port=settings.db_port
     )
     cur = connection.cursor()
-    ages = age_analyzer.get_friends_ages(domain)
+    ages = age_analyzer.get_friends_ages(target_id)
     estimated_age = model._query(ages)
-    target_id = age_analyzer.get_id_by_domain(domain)
-    name = age_analyzer.get_name(domain)
+    name = age_analyzer.get_name(target_id)
     mean = round(st.mean(ages), 2)
     hmean = round(st.harmonic_mean(ages), 2)
     mode = round(neuroanalyzer.find_average_mode(ages), 2)
@@ -60,16 +61,17 @@ def upgrade(domain, model):
     std = round(neuroanalyzer.find_std(ages), 2)
     vk_age = age_analyzer.get_age(target_id)
     friends_cnt = len(ages)
-    query = (f"UPDATE analyzed SET estimated_age = {estimated_age} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET mean = {mean} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET harmonic_mean = {hmean} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET mode = {mode} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET median = {median} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET std = {std} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET last_check = current_date WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET friends_cnt = {friends_cnt} WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET first_name = \'{name['first_name']}\' WHERE domain=\'{domain}\';"
-             f"UPDATE analyzed SET last_name = \'{name['last_name']}\' WHERE domain=\'{domain}\';"
+    query = (f"UPDATE analyzed SET estimated_age = {estimated_age} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET mean = {mean} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET harmonic_mean = {hmean} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET mode = {mode} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET median = {median} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET std = {std} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET last_check = current_date WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET friends_cnt = {friends_cnt} WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET first_name = \'{name['first_name']}\' WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET last_name = \'{name['last_name']}\' WHERE id=\'{target_id}\';"
+             f"UPDATE analyzed SET domain = \'{domain}\' WHERE id = \'{target_id}\'"
              )
     cur.execute(query)
     connection.commit()
@@ -78,6 +80,10 @@ def upgrade(domain, model):
 
 
 def check_was_analyzed_recently(domain):
+    target_id = age_analyzer.get_id_by_domain(domain)
+    domain = age_analyzer.get_domain_by_id(target_id)
+    if not target_id:
+        return 0
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -87,7 +93,7 @@ def check_was_analyzed_recently(domain):
     )
     cur = connection.cursor()
     cur.execute(
-        f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\' AND abs(last_check-current_date)<=1")
+        f"SELECT count(*) FROM analyzed WHERE id=\'{target_id}\' AND abs(last_check-current_date)<=1")
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -95,6 +101,10 @@ def check_was_analyzed_recently(domain):
 
 
 def check_was_analyzed_ever(domain):
+    target_id = age_analyzer.get_id_by_domain(domain)
+    domain = age_analyzer.get_domain_by_id(target_id)
+    if not target_id:
+        return 0
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -104,7 +114,7 @@ def check_was_analyzed_ever(domain):
     )
     cur = connection.cursor()
     cur.execute(
-        f"SELECT count(*) FROM analyzed WHERE domain=\'{domain}\'")
+        f"SELECT count(*) FROM analyzed WHERE id=\'{target_id}\'")
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -112,6 +122,8 @@ def check_was_analyzed_ever(domain):
 
 
 def get_age_from_database(domain):
+    target_id = age_analyzer.get_id_by_domain(domain)
+    domain = age_analyzer.get_domain_by_id(target_id)
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -120,7 +132,7 @@ def get_age_from_database(domain):
         port=settings.db_port
     )
     cur = connection.cursor()
-    cur.execute(f"SELECT estimated_age FROM analyzed WHERE domain=\'{domain}\'")
+    cur.execute(f"SELECT estimated_age FROM analyzed WHERE id=\'{target_id}\' and abs(last_check-current_date)<=1")
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -138,16 +150,23 @@ def analyze_and_insert(target, model, force_upgrade=False):
         host=settings.db_ip,
         port=settings.db_port
     )
-    domain = age_analyzer.get_domain_by_id(target)
     target_id = age_analyzer.get_id_by_domain(target)
+    domain = age_analyzer.get_domain_by_id(target_id)
     was_analyzed_recently = check_was_analyzed_recently(domain)
     was_analyzed_ever = check_was_analyzed_ever(domain)
+    # print(was_analyzed_ever)
+    # print(was_analyzed_recently)
+    # print(f"target_domain: {domain}")
     if was_analyzed_recently:
+        # print("1")
         return get_age_from_database(domain)
     elif was_analyzed_ever and force_upgrade:
+        # print("2")
         return upgrade(domain, model)
     else:
+        # print("3")
         ages = age_analyzer.get_friends_ages(domain)
+        # print(domain)
         if ages == "PC" or not ages:
             return -1  # Profile closed
         estimated_age = model._query(ages)
@@ -170,10 +189,13 @@ def analyze_and_insert(target, model, force_upgrade=False):
         cur.execute(query)
         connection.commit()
         connection.close()
+        # print(estimated_age)
         return estimated_age
 
 
 def set_real_age(domain, real_age, verify):
+    target_id = age_analyzer.get_id_by_domain(domain)
+    domain = age_analyzer.get_domain_by_id(target_id)
     model = neuroanalyzer.AgeRegressor()
     model.open_model('neuronet.sav')
     analyze_and_insert(domain, model, force_upgrade=True)
@@ -185,8 +207,8 @@ def set_real_age(domain, real_age, verify):
         port=settings.db_port
     )
     cur = connection.cursor()
-    cur.execute(f"UPDATE analyzed SET real_age = {real_age} WHERE domain = \'{domain}\';"
-                f"UPDATE analyzed SET verified = {verify} WHERE domain = \'{domain}\';")
+    cur.execute(f"UPDATE analyzed SET real_age = {real_age} WHERE id = \'{target_id}\';"
+                f"UPDATE analyzed SET verified = {verify} WHERE id = \'{target_id}\';")
     connection.commit()
     connection.close()
 

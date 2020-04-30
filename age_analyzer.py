@@ -124,8 +124,12 @@ def get_id_by_domain(target):
         "name_case": "nom"
     })
     try:
-        return r.json()['response'][0]['id']
+        ret = r.json()['response'][0]['id']
+        # print(f"target id: {ret}")
+        return ret
     except KeyError:
+        pass
+    except IndexError:
         pass
 
 
@@ -189,6 +193,7 @@ def get_friends_bdate(target):
     :return: list with friends' birth dates or -1 if profile is closed
     """
     target_id = get_id_by_domain(target)
+    # print(f"target_id: {target_id}")
     r = requests.get("https://api.vk.com/method/friends.get", params={
         "v": settings.version,
         "access_token": settings.token,
@@ -213,9 +218,14 @@ def get_domain_by_id(target):
         "fields": "domain",
         "user_id": target
     })
+    # print(r.text)
     try:
-        return r.json()['response'][0]['domain']
+        ret = r.json()['response'][0]['domain']
+        # print(f"target_domain1sasas: {ret}")
+        return ret
     except KeyError:
+        return -1
+    except IndexError:
         return -1
 
 
