@@ -28,6 +28,8 @@ def find_max_mode(list1) -> float:
     :param list1: list, mode of each you want to get
     :return
     """
+    if not list1:
+        return 0
     list_table = _counts(list1)
     len_table = len(list_table)
 
@@ -47,6 +49,8 @@ def find_average_mode(arr) -> float:
     :param arr: list, mode of each you want to get
     :return int
     """
+    if not arr:
+        return 0
     list_table = _counts(arr)
     len_table = len(list_table)
     new_list = []
@@ -64,15 +68,19 @@ def is_profile_closed(target) -> bool:
         "v": settings.version,
         "access_token": settings.token,
         "user_ids": target,
-        "fields": "",
-        "name_case": "Nom"
+        "fields": "is_closed"
     })
     r = r.json()
+    print(r)
     try:
         data = r['response'][0]
     except:
         return True
-    return data['is_closed']
+    print(data)
+    try:
+        return data['is_closed']
+    except:
+        return True
 
 
 def get_bdate(target: str) -> str:

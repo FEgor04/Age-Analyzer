@@ -1,6 +1,6 @@
 import os
 
-version = 5.103
+version = 5.89
 folder = 'csv/'
 csv_file = 'age_research1.csv'
 log_needed = False

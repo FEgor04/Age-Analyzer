@@ -56,6 +56,7 @@ def fill_friends_age(data: pd.DataFrame):
             data["Mode"][i] = round(find_average_mode(ages), 2)
             data["Harmonic Mean"][i] = round(st.harmonic_mean(ages), 2)
             data["Median"][i] = round(st.median(ages), 2)
+            data["Friends Count"][i] = len(ages)
             ages_np = np.array(ages)
             data["std"][i] = round(np.std(ages_np), 2)
     df = pd.DataFrame(data)

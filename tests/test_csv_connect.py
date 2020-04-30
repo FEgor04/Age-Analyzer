@@ -11,7 +11,8 @@ test_df = pd.DataFrame({
     "Harmonic Mean": [21.05, -1.0],
     "Mode": [15.0, -1.0],
     "Median": [21.0, -1.0],
-    "std": [21.4, -1.0]
+    "std": [21.4, -1.0],
+    "Friends Count": [22, -1]
 })
 
 
@@ -24,7 +25,8 @@ test_df = pd.DataFrame({
         "Harmonic Mean": [-1.0],
         "Mode": [-1.0],
         "Median": [-1.0],
-        "std": [-1.0]
+        "std": [-1.0],
+        "Friends Count": [-1]
     }), 0),
 ])
 def test_people_with_open_profile(dataframe_raw: pd.DataFrame, expected: int):
@@ -107,7 +109,8 @@ def test_fill_vk_age(data: pd.DataFrame, expected: pd.Series):
                 "Harmonic Mean": [-1, -1.0, 1, 1],
                 "Mode": [-1, -1.0, 1, 1],
                 "Median": [-1, -1.0, 1, 1],
-                "std": [-1, -1, 1, 1]
+                "std": [-1, -1, 1, 1],
+                "Friends Count": [-1, -1, 5, 20]
             }), 2
     )
 ])
