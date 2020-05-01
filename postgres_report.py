@@ -61,19 +61,24 @@ def upgrade(domain, model):
     std = round(neuroanalyzer.find_std(ages), 2)
     vk_age = age_analyzer.get_age(target_id)
     friends_cnt = len(ages)
-    query = (f"UPDATE analyzed SET estimated_age = {estimated_age} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET mean = {mean} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET harmonic_mean = {hmean} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET mode = {mode} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET median = {median} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET std = {std} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET last_check = current_date WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET friends_cnt = {friends_cnt} WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET first_name = \'{name['first_name']}\' WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET last_name = \'{name['last_name']}\' WHERE id=\'{target_id}\';"
-             f"UPDATE analyzed SET domain = \'{domain}\' WHERE id = \'{target_id}\'"
+    query = (f"UPDATE analyzed SET estimated_age = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET mean = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET harmonic_mean = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET mode = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET median = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET std = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET last_check = current_date WHERE id=\'%s\';"
+             f"UPDATE analyzed SET friends_cnt = %s WHERE id=\'%s\';"
+             f"UPDATE analyzed SET first_name = \'%s\' WHERE id=\'%s\';"
+             f"UPDATE analyzed SET last_name = \'%s\' WHERE id=\'%s\';"
+             f"UPDATE analyzed SET domain = \'%s\' WHERE id = \'%s\'"
              )
-    cur.execute(query)
+    cur.executescript(query, [estimated_age, target_id, mean, target_id, hmean,
+                              target_id, mode, target_id, median, target_id, std,
+                              target_id, target_id, friends_cnt, target_id,
+                              name['first_name'], target_id, name['last_name'], target_id,
+                              domain, target_id
+                              ])
     connection.commit()
     connection.close()
     return estimated_age
@@ -93,7 +98,7 @@ def check_was_analyzed_recently(domain):
     )
     cur = connection.cursor()
     cur.execute(
-        f"SELECT count(*) FROM analyzed WHERE id=\'{target_id}\' AND abs(last_check-current_date)<=1")
+        f"SELECT count(*) FROM analyzed WHERE id=%s AND abs(last_check-current_date)<=1", [target_id])
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -114,7 +119,7 @@ def check_was_analyzed_ever(domain):
     )
     cur = connection.cursor()
     cur.execute(
-        f"SELECT count(*) FROM analyzed WHERE id=\'{target_id}\'")
+        f"SELECT count(*) FROM analyzed WHERE id=%s", [target_id])
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -132,7 +137,7 @@ def get_age_from_database(domain):
         port=settings.db_port
     )
     cur = connection.cursor()
-    cur.execute(f"SELECT estimated_age FROM analyzed WHERE id=\'{target_id}\' and abs(last_check-current_date)<=1")
+    cur.execute(f"SELECT estimated_age FROM analyzed WHERE id=%s and abs(last_check-current_date)<=1", [target_id])
     records = cur.fetchall()
     connection.commit()
     connection.close()
@@ -182,11 +187,14 @@ def analyze_and_insert(target, model, force_upgrade=False):
         query = (f"insert into analyzed("
                  f"id, domain, first_name, last_name, estimated_age, mean, mode, harmonic_mean,"
                  f"median, std, friends_cnt, verified, last_check, vk_age) values ("
-                 f"{target_id}, \'{domain}\', \'{name['first_name']}\', \'{name['last_name']}\', {estimated_age}, {mean}, {mode}, {hmean}, {median},"
-                 f"{std}, {friends_cnt}, False, current_date, {vk_age}"
+                 f"%s, %s, %s, %s, %s, %s, %s, %s, %s,"
+                 f"%s, %s, False, current_date, %s"
                  f")")
+        print(query)
         cur = connection.cursor()
-        cur.execute(query)
+        cur.execute(query,
+                    [target_id, domain, name['first_name'], name['last_name'], estimated_age, mean, mode, hmean, median,
+                     std, friends_cnt, vk_age])
         connection.commit()
         connection.close()
         # print(estimated_age)
@@ -207,8 +215,9 @@ def set_real_age(domain, real_age, verify):
         port=settings.db_port
     )
     cur = connection.cursor()
-    cur.execute(f"UPDATE analyzed SET real_age = {real_age} WHERE id = \'{target_id}\';"
-                f"UPDATE analyzed SET verified = {verify} WHERE id = \'{target_id}\';")
+    cur.executescript(
+        f"UPDATE analyzed SET real_age = %s WHERE id = \'%s\';"
+        f"UPDATE analyzed SET verified = %s WHERE id = \'%s\';", [real_age, target_id, verify, target_id])
     connection.commit()
     connection.close()
 

@@ -6,6 +6,7 @@ import age_analyzer
 import csv_connect
 import neuroanalyzer
 import postgres_report
+import recursive_estimate
 import settings
 import tg as telegram_bot
 from age_analyzer import _counts
@@ -26,12 +27,13 @@ def find_average_mode(arr) -> float:
 
 
 if __name__ == "__main__":
-    ANALYZE = False  # Set it by yourself
+    ANALYZE = True  # Set it by yourself
     BOT = False
     FILL_CSV = False
-    TRAIN_MODEL = True
-    TRAIN_MODEL_WITH_TABLE = True
+    TRAIN_MODEL = False
+    TRAIN_MODEL_WITH_TABLE = False
     FILL_TABLE = False
+    FILL_TABLE_RECURSIVE = False
     if FILL_CSV:
         df = pd.read_csv('age_research.csv')
         df = csv_connect.fill_friends_age(df)
@@ -56,7 +58,20 @@ if __name__ == "__main__":
                 model.query(now_target, False, False)
                 postgres_report.set_real_age(now_target, df['Real Age'][i], True)
             except:
+                print("Profile closed.")
                 pass
+    if FILL_TABLE_RECURSIVE:
+        df = pd.read_csv('age_research1.csv')
+        model = neuroanalyzer.AgeRegressor()
+        model.open_model('neuronet.sav')
+        for i in range(len(df)):
+            now_target = df['ID'][i]
+            if i == 0:
+                print("Starting analyzing")
+            else:
+                print(f"{(i / len(df) * 100):2f}% done.")
+            print(f"Current target: {now_target}")
+            recursive_estimate.estimate_age_recursive(now_target, model, 3)
     if ANALYZE:
         print("Input target's ID:", end=" ")
         target = input()
@@ -68,7 +83,7 @@ if __name__ == "__main__":
         model = neuroanalyzer.AgeRegressor()
         model.open_model(settings.neural_network_file)
         name = age_analyzer.get_name(target=target)
-        predicted = model.query(target, False, False)
+        predicted = recursive_estimate.estimate_age_recursive(target, model)
         answer = f"Neural network thinks that {name['first_name']} {name['last_name']}" \
                  f"({target}) age is {predicted}"
         print(answer)
