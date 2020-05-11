@@ -10,6 +10,9 @@ import settings
 
 
 def create_table():
+    """
+    Create the main table (analyzed).
+    """
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -41,6 +44,10 @@ def create_table():
 
 
 def upgrade(domain, model):
+    """
+    Update person in the table
+    :return: person's age.
+    """
     target_id = age_analyzer.get_id_by_domain(domain)
     domain = age_analyzer.get_domain_by_id(target_id)
     connection = psycopg2.connect(
@@ -85,6 +92,9 @@ def upgrade(domain, model):
 
 
 def check_was_analyzed_recently(domain):
+    """
+    Check was person analyzed recently (yesterday or today)
+    """
     target_id = age_analyzer.get_id_by_domain(domain)
     domain = age_analyzer.get_domain_by_id(target_id)
     if not target_id:
@@ -106,6 +116,9 @@ def check_was_analyzed_recently(domain):
 
 
 def check_was_analyzed_ever(domain):
+    """
+    Check was person analyzed ever
+    """
     target_id = age_analyzer.get_id_by_domain(domain)
     domain = age_analyzer.get_domain_by_id(target_id)
     if not target_id:
@@ -127,6 +140,9 @@ def check_was_analyzed_ever(domain):
 
 
 def get_age_from_database(domain):
+    """
+    Get person's age from database
+    """
     target_id = age_analyzer.get_id_by_domain(domain)
     domain = age_analyzer.get_domain_by_id(target_id)
     connection = psycopg2.connect(
@@ -148,6 +164,9 @@ def get_age_from_database(domain):
 
 
 def analyze_and_insert(target, model, force_upgrade=False):
+    """
+    Analyze and insert, update if needed
+    """
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
@@ -202,6 +221,9 @@ def analyze_and_insert(target, model, force_upgrade=False):
 
 
 def set_real_age(domain, real_age, verify):
+    """
+    Set person's real age
+    """
     target_id = age_analyzer.get_id_by_domain(domain)
     domain = age_analyzer.get_domain_by_id(target_id)
     model = neuroanalyzer.AgeRegressor()
@@ -223,6 +245,9 @@ def set_real_age(domain, real_age, verify):
 
 
 def get_df_to_train():
+    """
+    Get df from table to train model
+    """
     connection = psycopg2.connect(
         database=settings.db_name,
         user=settings.db_login,
