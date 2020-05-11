@@ -63,7 +63,7 @@ class AgeRegressor:
         y_train_df = df_filtered['Real Age']
         if settings.log_needed:
             logging.info("train_with_raw_data^Data collected. Starting training.")
-        self.reg.fit(x_train_df, y_train_df, verbose=False)
+        self.reg.fit(x_train_df, y_train_df)
         if settings.log_needed:
             logging.info(f"train_with_raw_data^Catboost Regressor fitted successfully."
                          f"Tree Count: {self.reg.tree_count_}. Saving data.")
