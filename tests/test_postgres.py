@@ -36,5 +36,5 @@ def test_create_table():
 def test_analyze_and_insert(target, force_upgrade):
     model = neuroanalyzer.AgeRegressor()
     model.open_model('neuronet.sav')
-    postgres_report.analyze_and_insert(target, force_upgrade)
+    postgres_report.analyze_and_insert(target=target, force_upgrade=force_upgrade, model=model)
     assert True
